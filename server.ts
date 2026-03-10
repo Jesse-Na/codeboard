@@ -9,6 +9,11 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
+type RoomState = {
+	canvas: any;
+	code: string;
+};
+
 app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
@@ -18,30 +23,48 @@ app.prepare().then(() => {
 		},
 	});
 
-	let canvasData: any = null;
-	let codeData: string = "console.log('hello world!');";
+	const rooms: Record<string, RoomState> = {};
+
 	io.on("connection", (socket) => {
 		console.log("user connected: " + socket.id);
-		socket.broadcast.emit("canvasImage", canvasData);
-		socket.emit("codeString", codeData);
 
-		socket.on("canvasImage", (data: any) => {
-			console.log("Received canvas image from client: " + socket.id);
-			canvasData = data;
-			socket.broadcast.emit("canvasImage", data);
+		socket.on("joinRoom", (roomId: string) => {
+			console.log(`Socket ${socket.id} joined room ${roomId}`);
+			socket.join(roomId);
+
+			//Initialize new room
+			if (!rooms[roomId]) {
+				rooms[roomId] = {
+					canvas: null,
+					code: "console.log('hello world!');"
+				}
+			}
+
+			//Emit current room state to new user
+			socket.emit("canvasImage", rooms[roomId].canvas);
+			socket.emit("codeString", rooms[roomId].code);
 		});
 
-		socket.on("clearCanvas", () => {
+		socket.on("canvasImage", (data: any, roomId: string) => {
+			console.log("Received canvas image from client: " + socket.id);
+			if (!rooms[roomId]) return;
+			rooms[roomId].canvas = data;
+			socket.to(roomId).emit("canvasImage", data);
+		});
+
+		socket.on("clearCanvas", (roomId: string) => {
 			console.log(
 				"Received clear canvas event from client: " + socket.id,
 			);
-			socket.broadcast.emit("clearCanvas");
+			if (!rooms[roomId]) return;
+			socket.to(roomId).emit("clearCanvas");
 		});
 
-		socket.on("codeString", (data: string) => {
+		socket.on("codeString", (data: string, roomId: string) => {
 			console.log("Received code string from client: " + socket.id);
-			codeData = data;
-			socket.broadcast.emit("codeString", data);
+			if (!rooms[roomId]) return;
+			rooms[roomId].code = data;
+			socket.to(roomId).emit("codeString", data);
 		});
 	});
 
