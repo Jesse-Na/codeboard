@@ -76,14 +76,20 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
 	useEffect(() => {
         if (!socket) return;
 
-        const handler = (data: string) => {
+        const codeHandler = (data: string) => {
 			setCodeValue(data);
         };
 
-		socket.on("codeString", handler);
+        const langHandler = (data: string) => {
+            setLangSelected(data);
+        };
+
+		socket.on("codeString", codeHandler);
+        socket.on("languageChange", langHandler);
 
         return () => {
-            socket.off("codeString", handler);
+            socket.off("codeString", codeHandler);
+            socket.off("languageChange", langHandler);
         };
     }, [socket]);
 
@@ -99,6 +105,17 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
         }
     };
 
+    //When language dropdown is updated
+    const handleLangChange = (value: string) => {
+        if (value === langSelected) return;
+
+        setLangSelected(value);
+
+        if (socket) {
+            socket.emit("languageChange", value, roomId);
+        }
+    }
+
     return (
         <div className="flex flex-col items-start">
             <div className="flex items-center gap-2 mb-1">
@@ -106,7 +123,7 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
                 
                 <Select 
                     value={langSelected} 
-                    onValueChange={(value) => setLangSelected(value)}
+                    onValueChange={handleLangChange}
                 >
                     <SelectTrigger className="w-[180px] h-8">
                         <SelectValue placeholder="Language"/>
