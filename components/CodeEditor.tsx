@@ -7,16 +7,46 @@ import io, { Socket } from "socket.io-client";
 import CodeMirror from '@uiw/react-codemirror';
 import { basicSetup } from "codemirror";
 import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
+import { cpp } from '@codemirror/lang-cpp';
+import { json } from '@codemirror/lang-json';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type CodeEditorProps = {
 	width?: number;
 	height?: number;
     theme?: "light" | "dark";
+    language?: string;
 };
 
-export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }: CodeEditorProps) {
+const languageDropdownOptions = [
+    { label: "JavaScript", value: "js" },
+    { label: "Python", value: "py" },
+    { label: "Java", value: "java" },
+    { label: "C++", value: "cpp"},
+    { label: "JSON", value: "json"},
+]
+
+const languageExtensions: { [key: string]: { extension: any, file_ext: string } } = {
+    js: {extension: javascript({ jsx: true }), file_ext: '.js'},
+    py: {extension: python(), file_ext: '.py'},
+    java: {extension: java(), file_ext: '.java'},
+    cpp: {extension: cpp(), file_ext: '.cpp'},
+    json: {extension: json(), file_ext: '.json'},
+};
+
+export default function CodeEditor({ width = 600, height = 400, theme = 'dark', language = 'js' }: CodeEditorProps) {
     
     const [codeValue, setCodeValue] = useState<string>("// loading...");
+    const [langSelected, setLangSelected] = useState<string>(language);
 
     const params = useParams();
     const roomId = params.id as string;
@@ -70,13 +100,38 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
     };
 
     return (
-		<CodeMirror 
-            value={codeValue}
-            width={`${width}px`}
-            height={`${height}px`}
-            theme={theme}
-            extensions={[basicSetup, javascript({ jsx: true })]} 
-            onChange={handleChange} 
-        />
+        <div className="flex flex-col items-start">
+            <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm font-medium">Language:</span>
+                
+                <Select 
+                    value={langSelected} 
+                    onValueChange={(value) => setLangSelected(value)}
+                >
+                    <SelectTrigger className="w-[180px] h-8">
+                        <SelectValue placeholder="Language"/>
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        <SelectGroup>
+                            {languageDropdownOptions.map((item) => (
+                                <SelectItem key={item.value} value={item.value}>
+                                    {item.label}
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <CodeMirror 
+                value={codeValue}
+                width={`${width}px`}
+                height={`${height}px`}
+                theme={theme}
+                extensions={[basicSetup, languageExtensions[langSelected].extension]} 
+                onChange={handleChange} 
+            />
+        </div>
 	);
 }
