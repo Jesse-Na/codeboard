@@ -2,6 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create a `.env` file with two variables, for example:
+
+```
+DATABASE_URL="postgresql://<user>:<password>@localhost:5432/codeboard?schema=public"
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
+```
+
+Run `npm install`.
+
+Create a postgresql database called codeboard that your user can access.
+
+Run `npx prisma migrate dev --name init`.
+
 First, run the development server:
 
 ```bash
