@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
 
@@ -11,6 +12,10 @@ type BoardProps = {
 
 export default function Board({ width = 600, height = 400 }: BoardProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+
+	const params = useParams();
+    const roomId = params.id as string;
+
 	const [socket, setSocket] = useState<Socket<
 		DefaultEventsMap,
 		DefaultEventsMap
@@ -24,6 +29,13 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 			newSocket.close();
 		};
 	}, []);
+
+	//Join correct room once socket connects
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.emit("joinRoom", roomId);
+    }, [socket, roomId]);
 
 	// Socket event listeners
 	useEffect(() => {
@@ -92,7 +104,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		const clearCanvas = (e: KeyboardEvent) => {
 			if (e.key === "c") {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				socket.emit("clearCanvas");
+				socket.emit("clearCanvas", roomId);
 			} else {
 				return;
 			}
@@ -105,7 +117,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 				console.log(blob);
 				if (blob) {
 					blob.arrayBuffer().then((buf) => {
-						socket.emit("canvasImage", buf);
+						socket.emit("canvasImage", buf, roomId);
 					});
 				}
 			});

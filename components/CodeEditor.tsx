@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
 import CodeMirror from '@uiw/react-codemirror';
-import { ViewUpdate } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { javascript } from '@codemirror/lang-javascript';
 
@@ -17,6 +17,9 @@ type CodeEditorProps = {
 export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }: CodeEditorProps) {
     
     const [codeValue, setCodeValue] = useState<string>("// loading...");
+
+    const params = useParams();
+    const roomId = params.id as string;
 
     const [socket, setSocket] = useState<Socket<
 		DefaultEventsMap,
@@ -31,6 +34,13 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
 			newSocket.close();
 		};
 	}, []);
+
+    //Join correct room once socket connects
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.emit("joinRoom", roomId);
+    }, [socket, roomId]);
 
     // Event listener for receiving code editor data from the socket
 	useEffect(() => {
@@ -47,7 +57,7 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
         };
     }, [socket]);
 
-    const handleChange = (value: string, viewUpdate: ViewUpdate) => {
+    const handleChange = (value: string) => {
 
         // No need to set and emit value again if the update was remote and was already set
         if (value === codeValue) return;
@@ -55,7 +65,7 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
         setCodeValue(value);
 
         if (socket) {
-            socket.emit("codeString", value);
+            socket.emit("codeString", value, roomId);
         }
     };
 
