@@ -15,7 +15,9 @@ Create a postgresql database called codeboard that your user can access.
 
 Run `npx prisma migrate dev --name init`.
 
-First, run the development server:
+- Run `npx prisma migrate dev` whenever there was a change to `schema.prisma`
+
+Run the development server:
 
 ```bash
 npm run dev

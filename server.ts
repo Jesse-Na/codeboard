@@ -18,14 +18,14 @@ app.prepare().then(() => {
 		},
 	});
 
-	let canvasData: any = null;
+	let canvasData: string = "";
 	let codeData: string = "console.log('hello world!');";
 	io.on("connection", (socket) => {
 		console.log("user connected: " + socket.id);
 		socket.broadcast.emit("canvasImage", canvasData);
 		socket.emit("codeString", codeData);
 
-		socket.on("canvasImage", (data: any) => {
+		socket.on("canvasImage", (data: string) => {
 			console.log("Received canvas image from client: " + socket.id);
 			canvasData = data;
 			socket.broadcast.emit("canvasImage", data);
