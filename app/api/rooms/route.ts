@@ -14,5 +14,7 @@ export async function GET() {
 			id: "asc",
 		},
 	});
+
+	console.log("Rooms fetched from database:", rooms);
 	return NextResponse.json(rooms);
 }

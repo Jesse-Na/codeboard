@@ -22,9 +22,11 @@ model User {
 
 model Room {
   id       Int      @id @default(autoincrement())
+  name     String   @default("Untitled Room")
   owner    User     @relation(fields: [ownerId], references: [id])
   ownerId  String
   isActive Boolean  @default(true)
+  desc     String?
   records  Record[]
 }
 

@@ -7,6 +7,7 @@ Create a `.env` file with two variables, for example:
 ```
 DATABASE_URL="postgresql://<user>:<password>@localhost:5432/codeboard?schema=public"
 NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
+DEBUG_MODE=true
 ```
 
 Run `npm install`.

@@ -1,6 +1,8 @@
+"use client";
+
 import { createContext, useContext } from "react";
 
-type AuthContextType = {
+export type AuthContextType = {
 	userId: string | null;
 	name: string | null;
 	email: string | null;
