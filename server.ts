@@ -12,6 +12,7 @@ const handler = app.getRequestHandler();
 type RoomState = {
 	canvas: ArrayBuffer;
 	code: string;
+	language: string;
 };
 
 app.prepare().then(() => {
@@ -37,12 +38,14 @@ app.prepare().then(() => {
 				rooms[roomId] = {
 					canvas: new ArrayBuffer(0),
 					code: "console.log('hello world!');",
+					language: "js",
 				};
 			}
 
 			//Emit current room state to new user
 			socket.emit("canvasImage", rooms[roomId].canvas);
 			socket.emit("codeString", rooms[roomId].code);
+			socket.emit("languageChange", rooms[roomId].language)
 		});
 
 		socket.on("canvasImage", (data: ArrayBuffer, roomId: string) => {
@@ -65,6 +68,13 @@ app.prepare().then(() => {
 			if (!rooms[roomId]) return;
 			rooms[roomId].code = data;
 			socket.to(roomId).emit("codeString", data);
+		});
+
+		socket.on("languageChange", (data: string, roomId: string) => {
+			console.log("Received language from client: " + socket.id);
+			if (!rooms[roomId]) return;
+			rooms[roomId].language = data;
+			socket.to(roomId).emit("languageChange", data);
 		});
 	});
 
