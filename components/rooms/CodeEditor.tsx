@@ -7,17 +7,17 @@ import io, { Socket } from "socket.io-client";
 import CodeMirror from '@uiw/react-codemirror';
 import { basicSetup } from "codemirror";
 import { javascript } from '@codemirror/lang-javascript';
+import { CodeEditorTools } from "./CodeEditorTools";
 
 type CodeEditorProps = {
-	width?: number;
-	height?: number;
+    parentId:string
     theme?: "light" | "dark";
 };
 
-export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }: CodeEditorProps) {
-    
+export default function CodeEditor({ parentId,theme = 'dark' }: CodeEditorProps) {
     const [codeValue, setCodeValue] = useState<string>("// loading...");
-
+    const [parent,setParent] = useState<HTMLElement|null>(null)
+    const [fontSize, setFontSize] = useState<number>(12)
     const params = useParams();
     const roomId = params.id as string;
 
@@ -25,6 +25,11 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
 		DefaultEventsMap,
 		DefaultEventsMap
 	> | null>(null);
+
+    useEffect(() => {
+        setParent(document.getElementById(parentId));
+        console.log(parent)
+    }, []);
 
 	useEffect(() => {
 		const newSocket = io("http://localhost:3000");
@@ -69,14 +74,29 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark' }
         }
     };
 
+    const increaseFontSize = () =>{
+        setFontSize(fontSize+2)
+    }
+
+    const decreaseFontSize = () =>{
+        setFontSize(fontSize-2)
+    }
+
+    const setSize=(size:number)=>{
+        setFontSize(size)
+    }
     return (
+    <div>
+        <CodeEditorTools inputSize={setSize} increase={increaseFontSize} decrease={decreaseFontSize}/>
 		<CodeMirror 
             value={codeValue}
-            width={`${width}px`}
-            height={`${height}px`}
+			height={parent?.clientHeight+'px'}
+			width={parent?.clientWidth}
             theme={theme}
+            style={{"fontSize": fontSize}}
             extensions={[basicSetup, javascript({ jsx: true })]} 
             onChange={handleChange} 
         />
+    </div>
 	);
 }

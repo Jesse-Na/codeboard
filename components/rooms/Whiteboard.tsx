@@ -4,17 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
+import { WhiteboardTools } from "./WhiteboardTools";
+import { Separator } from "../ui/separator";
 
 type BoardProps = {
-	width?: number;
+	parentId: string;
 	height?: number;
+	width?:number
 };
 
-export default function Board({ width = 600, height = 400 }: BoardProps) {
+export default function Board({ parentId, height, width }: BoardProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-
+	const [parent,setParent] = useState<HTMLElement|null>(null)
 	const params = useParams();
+	let isErasing = false
+
     const roomId = params.id as string;
+	useEffect(() => {
+        setParent(document.getElementById(parentId));
+    }, []);
+
 
 	const [socket, setSocket] = useState<Socket<
 		DefaultEventsMap,
@@ -63,6 +72,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 
 	useEffect(() => {
 		let isDrawing = false;
+		let startErasing = true;
 		let lastX = 0;
 		let lastY = 0;
 
@@ -74,53 +84,40 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 
 		// Set up drawing styles
 		ctx.strokeStyle = "black";
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 4;
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
 
 		const startDrawing = (e: { offsetX: number; offsetY: number }) => {
-			isDrawing = true;
-
-			[lastX, lastY] = [e.offsetX, e.offsetY];
+			if (isErasing){
+				console.log('erasing')
+				startErasing = true
+			}
+			else{
+				isDrawing = true;
+				[lastX, lastY] = [e.offsetX, e.offsetY];
+			}
 		};
 
 		const draw = (e: { offsetX: number; offsetY: number }) => {
-			if (!isDrawing) return;
-
-			ctx.beginPath();
-			ctx.moveTo(lastX, lastY);
-			ctx.lineTo(e.offsetX, e.offsetY);
-			ctx.stroke();
-
+			if (isErasing && startErasing){
+				ctx.clearRect(lastX, lastY, ctx.lineWidth*2, ctx.lineWidth*2);
+				ctx.stroke()
+			}
+			else if (!isDrawing) return;
+			else{
+				ctx.beginPath();
+				ctx.moveTo(lastX, lastY);
+				ctx.lineTo(e.offsetX, e.offsetY);
+				ctx.stroke();
+			}
 			[lastX, lastY] = [e.offsetX, e.offsetY];
 		};
 
 		const endDrawing = () => {
 			isDrawing = false;
-
+			startErasing = false;
 			sendCanvasData();
-		};
-
-		const clearCanvas = (e: KeyboardEvent) => {
-			if (e.key === "c") {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				socket.emit("clearCanvas", roomId);
-			} else {
-				return;
-			}
-
-			e.preventDefault();
-		};
-
-		const sendCanvasData = () => {
-			canvas.toBlob((blob) => {
-				console.log(blob);
-				if (blob) {
-					blob.arrayBuffer().then((buf) => {
-						socket.emit("canvasImage", buf, roomId);
-					});
-				}
-			});
 		};
 
 		// Event listeners for drawing
@@ -128,9 +125,6 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		canvas.addEventListener("mousemove", draw);
 		canvas.addEventListener("mouseup", endDrawing);
 		canvas.addEventListener("mouseout", endDrawing);
-
-		// Event listeners for erasing
-		window.addEventListener("keydown", clearCanvas);
 
 		return () => {
 			// Clean up event listeners when component unmounts
@@ -142,12 +136,51 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		};
 	}, [canvasRef, socket]);
 
+	const clearCanvas = () => {
+		if(!socket)return
+		const canvas: HTMLCanvasElement | null = canvasRef.current;
+		if (!canvas) return;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+		
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		socket.emit("clearCanvas", roomId);
+	};
+
+	const startErase =() =>{
+		isErasing = true;
+	}
+	const startPencil =() =>{
+		isErasing = false;
+	}
+
+	const sendCanvasData = () => {
+		if(!socket)return
+		const canvas: HTMLCanvasElement | null = canvasRef.current;
+		if (!canvas) return;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		canvas.toBlob((blob) => {
+		console.log(blob)
+		if (blob) {
+				blob.arrayBuffer().then((buf) => {
+					socket.emit("canvasImage", buf, roomId);	
+				});
+			}
+		});
+	};
+
 	return (
-		<canvas
-			ref={canvasRef}
-			width={width}
-			height={height}
-			style={{ backgroundColor: "white" }}
-		/>
+		<div>
+			<WhiteboardTools erase={startErase} pencil={startPencil} clear={clearCanvas} canvasRef={canvasRef} />
+			<Separator/>
+			<canvas
+				ref={canvasRef}
+				height={(parent?.clientHeight)}
+				width={parent?.clientWidth}
+				style={{backgroundColor: "white" }}
+			/>
+		</div>
 	);
 }
