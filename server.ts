@@ -10,7 +10,7 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
 type RoomState = {
-	canvas: any;
+	canvas: ArrayBuffer;
 	code: string;
 };
 
@@ -35,9 +35,9 @@ app.prepare().then(() => {
 			//Initialize new room
 			if (!rooms[roomId]) {
 				rooms[roomId] = {
-					canvas: null,
-					code: "console.log('hello world!');"
-				}
+					canvas: new ArrayBuffer(0),
+					code: "console.log('hello world!');",
+				};
 			}
 
 			//Emit current room state to new user
@@ -45,7 +45,7 @@ app.prepare().then(() => {
 			socket.emit("codeString", rooms[roomId].code);
 		});
 
-		socket.on("canvasImage", (data: any, roomId: string) => {
+		socket.on("canvasImage", (data: ArrayBuffer, roomId: string) => {
 			console.log("Received canvas image from client: " + socket.id);
 			if (!rooms[roomId]) return;
 			rooms[roomId].canvas = data;
