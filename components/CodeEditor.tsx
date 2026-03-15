@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
@@ -48,6 +48,7 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
     
     const [codeValue, setCodeValue] = useState<string>("// loading...");
     const [langSelected, setLangSelected] = useState<string>(language);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const params = useParams();
     const roomId = params.id as string;
@@ -94,6 +95,7 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
         };
     }, [socket]);
 
+    //When code editor is updated
     const handleChange = (value: string) => {
 
         // No need to set and emit value again if the update was remote and was already set
@@ -115,6 +117,24 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
         if (socket) {
             socket.emit("languageChange", value, roomId);
         }
+    }
+
+    //When Upload File button is clicked, upload code file
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (!selectedFile) return;
+
+        const fileContents: string = await selectedFile.text();
+        handleChange(fileContents);
+
+        //Update language selected based on file type
+        const ext = selectedFile.name.split(".").pop();
+        if (ext && languageExtensions[ext]) {
+            handleLangChange(ext);
+        }
+
+        //Reset input for fresh state next time
+        e.target.value = "";
     }
 
     //When Download Code button is clicked, download code file
@@ -165,13 +185,26 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
                     </Select>
                 </div>
 
-                {/* Download button */}
-                <Button className="h-9" onClick={handleDownload}>
-                    Download Code
-                </Button>
-            </div>
+                <div className="flex gap-2">
+                    {/* Upload button */}
+                    <Button className="h-9" onClick={() => fileInputRef.current?.click()}>
+                        Upload Code
+                    </Button>
 
-            
+                    {/* Download button */}
+                    <Button className="h-9" onClick={handleDownload}>
+                        Download Code
+                    </Button>
+                </div>
+                
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".js,.py,.java,.cpp,.json,.txt"
+                    onChange={handleUpload}
+                />
+            </div>
         </div>
 	);
 }
