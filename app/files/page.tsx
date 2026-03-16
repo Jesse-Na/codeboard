@@ -1,30 +1,28 @@
-import { AppSidebar } from "@/components/dashboard/app-sidebar"
-import { RoomCards } from "@/components/dashboard/room-cards"
-import { SiteHeader } from "@/components/dashboard/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/dashboard/app-sidebar";
+import { SiteHeader } from "@/components/dashboard/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
-  return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <p className="font-semibold px-4 py-4 lg:px-6">My Files</p>
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+	return (
+		<SidebarProvider
+			style={
+				{
+					"--sidebar-width": "calc(var(--spacing) * 72)",
+					"--header-height": "calc(var(--spacing) * 12)",
+				} as React.CSSProperties
+			}
+		>
+			<AppSidebar variant="inset" />
+			<SidebarInset>
+				<SiteHeader />
+				<div className="flex flex-1 flex-col">
+					<div className="@container/main flex flex-1 flex-col gap-2">
+						<p className="font-semibold px-4 py-4 lg:px-6">
+							My Files
+						</p>
+					</div>
+				</div>
+			</SidebarInset>
+		</SidebarProvider>
+	);
 }

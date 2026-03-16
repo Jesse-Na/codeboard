@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Slider } from "@/components/ui/slider";
-import { IconEraser, IconPencil, IconTrash } from "@tabler/icons-react";
+import {
+	IconDeviceFloppy,
+	IconEraser,
+	IconPencil,
+	IconTrash,
+} from "@tabler/icons-react";
 import { PencilColour, Tool } from "@/components/Whiteboard";
 
 export default function Toolbar({
@@ -14,6 +19,7 @@ export default function Toolbar({
 	clearCanvas,
 	lineWidth,
 	setLineWidth,
+	handleSave,
 }: {
 	activeTool: Tool;
 	setActiveTool: (tool: Tool) => void;
@@ -21,6 +27,7 @@ export default function Toolbar({
 	clearCanvas: () => void;
 	lineWidth: number[];
 	setLineWidth: (width: number[]) => void;
+	handleSave: () => void;
 }) {
 	const [showColourPalette, setShowColourPalette] = useState(false);
 	const [showLineWidthSlider, setShowLineWidthSlider] = useState(false);
@@ -76,6 +83,9 @@ export default function Toolbar({
 					</Button>
 					<Button size="sm" variant="outline" onClick={clearCanvas}>
 						<IconTrash />
+					</Button>
+					<Button size="sm" variant="outline" onClick={handleSave}>
+						<IconDeviceFloppy />
 					</Button>
 				</ButtonGroup>
 				<Slider
