@@ -34,7 +34,7 @@ model Record {
   id          Int      @id @default(autoincrement())
   room        Room     @relation(fields: [roomId], references: [id])
   roomId      Int
-  codeFile    String
-  boardFile   String
+  codeFile    String?
+  boardFile   String?
   lastUpdated DateTime @updatedAt
 }

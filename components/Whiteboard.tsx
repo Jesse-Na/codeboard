@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
 import Toolbar from "./WhiteboardToolbar";
+import { saveBoard } from "@/lib/actions";
 
 type BoardProps = {
 	width?: number;
@@ -40,7 +41,9 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 	};
 
 	useEffect(() => {
-		const newSocket = io("http://localhost:3000");
+		const newSocket = io(
+			process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
+		);
 		setSocket(newSocket);
 
 		return () => {
@@ -139,19 +142,19 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 			);
 		};
 
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "e") {
-				setActiveTool("eraser");
-			} else if (e.key === "p") {
-				setActiveTool("pencil");
-			} else if (e.key === "c") {
-				clearCanvas();
-			} else {
-				return;
-			}
+		// const handleKeyDown = (e: KeyboardEvent) => {
+		// 	if (e.key === "e") {
+		// 		setActiveTool("eraser");
+		// 	} else if (e.key === "p") {
+		// 		setActiveTool("pencil");
+		// 	} else if (e.key === "c") {
+		// 		clearCanvas();
+		// 	} else {
+		// 		return;
+		// 	}
 
-			e.preventDefault();
-		};
+		// 	e.preventDefault();
+		// };
 
 		// Event listeners for drawing
 		canvas.addEventListener("mousedown", startDrawing);
@@ -160,7 +163,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		canvas.addEventListener("mouseout", endDrawing);
 
 		// Event listeners for erasing
-		window.addEventListener("keydown", handleKeyDown);
+		// window.addEventListener("keydown", handleKeyDown);
 
 		return () => {
 			// Clean up event listeners when component unmounts
@@ -168,9 +171,31 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 			canvas.removeEventListener("mousemove", draw);
 			canvas.removeEventListener("mouseup", endDrawing);
 			canvas.removeEventListener("mouseout", endDrawing);
-			window.removeEventListener("keydown", handleKeyDown);
+			// window.removeEventListener("keydown", handleKeyDown);
 		};
 	}, [canvasRef, socket, roomId, pencilColour, activeTool, lineWidth]);
+
+	const handleSave = () => {
+		if (!canvasRef.current) return;
+		const canvas = canvasRef.current;
+		canvas.toBlob(
+			(blob) => {
+				if (blob) {
+					const file = new File([blob], "board.png", {
+						type: "image/png",
+					});
+					try {
+						saveBoard(Number(roomId), file);
+						alert("Board saved successfully!");
+					} catch (error) {
+						alert("Error saving board: " + error);
+					}
+				}
+			},
+			"image/png",
+			1,
+		);
+	};
 
 	return (
 		<div
@@ -183,6 +208,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 				clearCanvas={clearCanvas}
 				lineWidth={lineWidth}
 				setLineWidth={setLineWidth}
+				handleSave={handleSave}
 			/>
 			<canvas
 				ref={canvasRef}
