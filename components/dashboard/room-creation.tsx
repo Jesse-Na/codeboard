@@ -20,14 +20,16 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function RoomCreation() {
-  return (
+interface RoomCreationProps {
+  open: boolean
+  onClose: () => void
+}
 
-  <Dialog>
+export function RoomCreation({open, onClose}: RoomCreationProps) {
+
+  return (
+  <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
     <form>
-        <DialogTrigger asChild>
-          <Button variant="outline">Create New Room</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Create a Room</DialogTitle>
@@ -45,6 +47,9 @@ export function RoomCreation() {
               <Input id="desc" name="desc" placeholder="e.g. Intro to Python" className="text-muted-foreground"/>
             </Field>
           </FieldGroup>
+          {/* Language Dropdown */}
+
+          {/* Private or Public Room - Comment this out for now */}
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>

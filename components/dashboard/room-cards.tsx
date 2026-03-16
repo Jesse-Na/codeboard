@@ -18,6 +18,7 @@ import { createRoom } from "@/lib/actions";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext, useAuthContext } from "@/contexts/AuthContext";
 import { Room } from "@/generated/prisma/client";
+import { RoomCreation } from "./room-creation";
 
 export function RoomCards() {
 	const { userId } = useAuthContext();
@@ -87,12 +88,15 @@ export function RoomCards() {
 				<Button
 					variant="ghost"
 					className="flex flex-col gap-2 h-full w-full hover:bg-transparent"
-					onClick={handleCreateRoom}
+					onClick={() => setModalOpen(true)}
 				>
 					<Plus className="w-15 h-15 text-muted-foreground" />
 					<p>Create New Room</p>
 				</Button>
 			</Card>
+
+			{/* Room Creation Modal */}
+			<RoomCreation open={modalOpen} onClose={() => setModalOpen(false)} />
 		</div>
 	);
 }
