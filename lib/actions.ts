@@ -41,6 +41,32 @@ export async function createRoom(ownerId: string): Promise<number> {
 	return room.id;
 }
 
+export async function updateRoom(
+	roomId: number,
+	name: string,
+	isActive: boolean | undefined,
+	desc: string | undefined,
+) {
+	await prisma.room.update({
+		where: {
+			id: roomId,
+		},
+		data: {
+			name,
+			isActive,
+			desc,
+		},
+	});
+}
+
+export async function deleteRoom(roomId: number) {
+	await prisma.room.delete({
+		where: {
+			id: roomId,
+		},
+	});
+}
+
 export async function saveCode(roomId: number, code: File) {
 	try {
 		const room = await prisma.room.findUnique({
