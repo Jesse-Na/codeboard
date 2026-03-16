@@ -22,6 +22,7 @@ import { Room } from "@/generated/prisma/client";
 export function RoomCards() {
 	const { userId } = useAuthContext();
 	const [rooms, setRooms] = useState<Room[]>([]);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		getRooms();

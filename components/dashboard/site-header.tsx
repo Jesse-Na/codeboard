@@ -16,7 +16,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <Button size="sm" className="hidden sm:flex">
             <IconCirclePlusFilled className="mr-2" />
-              New Workspace
+              Create New Room
           </Button>
         </div>
       </div>
