@@ -6,7 +6,6 @@ import { Plus } from "lucide-react";
 
 import {
 	Card,
-	CardAction,
 	CardContent,
 	CardDescription,
 	CardFooter,
@@ -15,8 +14,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { createRoom } from "@/lib/actions";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext, useAuthContext } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { Room } from "@/generated/prisma/client";
 
 export function RoomCards() {
