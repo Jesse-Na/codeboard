@@ -6,7 +6,7 @@ import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
 import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
-import Toolbar from "./WhiteboardToolbar";
+// import Toolbar from "./WhiteboardToolbar";
 
 type BoardProps = {
 	parentId: string;
@@ -14,26 +14,20 @@ type BoardProps = {
 	width?:number
 };
 
-export default function Board({ parentId, height, width }: BoardProps) {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [parent,setParent] = useState<HTMLElement|null>(null)
-	const params = useParams();
-	let isErasing = false
-
-    const roomId = params.id as string;
-	useEffect(() => {
-        setParent(document.getElementById(parentId));
-    }, []);
 
 export type Tool = "pencil" | "eraser";
 export type PencilColour = "black" | "red" | "blue" | "green";
 
-export default function Board({ width = 600, height = 400 }: BoardProps) {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+export default function Board({ parentId, width = 600, height = 400 }: BoardProps) {
 	const [activeTool, setActiveTool] = useState<Tool>("pencil");
 	const [pencilColour, setPencilColour] = useState<PencilColour>("black");
 	const [lineWidth, setLineWidth] = useState([2]);
-
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [parent,setParent] = useState<HTMLElement|null>(null)
+	let isErasing = false
+	useEffect(() => {
+        setParent(document.getElementById(parentId));
+    }, []);
 	const params = useParams();
 	const roomId = params.id as string;
 
@@ -42,16 +36,16 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		DefaultEventsMap
 	> | null>(null);
 
-	const clearCanvas = () => {
-		if (!socket) return;
-		const canvas: HTMLCanvasElement | null = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
+	// const clearCanvas = () => {
+	// 	if (!socket) return;
+	// 	const canvas: HTMLCanvasElement | null = canvasRef.current;
+	// 	if (!canvas) return;
+	// 	const ctx = canvas.getContext("2d");
+	// 	if (!ctx) return;
 
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		socket.emit("clearCanvas", roomId);
-	};
+	// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// 	socket.emit("clearCanvas", roomId);
+	// };
 
 	useEffect(() => {
 		const newSocket = io("http://localhost:3000");
@@ -241,24 +235,24 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 				ref={canvasRef}
 				height={(parent?.clientHeight)}
 				width={parent?.clientWidth}
-				style={{backgroundColor: "white" }}
-		<div
-			className={`relative items-center gap-4 rounded-md border bg-background`}
-		>
-			<Toolbar
-				activeTool={activeTool}
-				setActiveTool={setActiveTool}
-				setPencilColour={setPencilColour}
-				clearCanvas={clearCanvas}
-				lineWidth={lineWidth}
-				setLineWidth={setLineWidth}
-			/>
-			<canvas
-				ref={canvasRef}
-				width={width}
-				height={height}
-				style={{ backgroundColor: "white" }}
-			/>
+				style={{backgroundColor: "white" }}/>
+		{/* // <div
+		// 	className={`relative items-center gap-4 rounded-md border bg-background`}
+		// >
+		// 	<Toolbar
+		// 		activeTool={activeTool}
+		// 		setActiveTool={setActiveTool}
+		// 		setPencilColour={setPencilColour}
+		// 		clearCanvas={clearCanvas}
+		// 		lineWidth={lineWidth}
+		// 		setLineWidth={setLineWidth}
+		// 	/>
+		// 	<canvas
+		// 		ref={canvasRef}
+		// 		width={width}
+		// 		height={height}
+		// 		style={{ backgroundColor: "white" }}
+		// 	/> */}
 		</div>
 	);
 }
