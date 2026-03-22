@@ -1,0 +1,16 @@
+"use client"
+import Whiteboard from "@/components/rooms/Whiteboard";
+import CodeEditor from "@/components/rooms/CodeEditor";
+import { useEffect, useRef, useState } from "react";
+
+export default function EditorSection() {
+	return (
+		<div className="flex flex-row w-full h-full">
+			<div className="w-full" id="codeeditorui">
+				<CodeEditor parentId="codeeditorui"/>
+			</div>
+			<div id="whiteboardui" className="w-full">
+				<Whiteboard parentId='whiteboardui' />
+			</div> 
+		</div>
+)}

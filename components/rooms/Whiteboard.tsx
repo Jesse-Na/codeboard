@@ -4,22 +4,30 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
-import Toolbar from "./WhiteboardToolbar";
+import { WhiteboardTools } from "./WhiteboardTools";
+import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
 
 type BoardProps = {
-	width?: number;
+	parentId: string;
 	height?: number;
+	width?:number
 };
+
 
 export type Tool = "pencil" | "eraser";
 export type PencilColour = "black" | "red" | "blue" | "green";
 
-export default function Board({ width = 600, height = 400 }: BoardProps) {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+export default function Board({ parentId, width = 600, height = 400 }: BoardProps) {
 	const [activeTool, setActiveTool] = useState<Tool>("pencil");
 	const [pencilColour, setPencilColour] = useState<PencilColour>("black");
 	const [lineWidth, setLineWidth] = useState([2]);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [parent,setParent] = useState<HTMLElement|null>(null)
+	let isErasing = false
+	useEffect(() => {
+        setParent(document.getElementById(parentId));
+    }, []);
 
 	const params = useParams();
 	const roomId = params.id as string;
@@ -93,19 +101,21 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Set up drawing styles
-		if (activeTool === "eraser") {
-			ctx.globalCompositeOperation = "destination-out";
-			ctx.strokeStyle = "rgba(0,0,0,1)";
-		} else {
-			ctx.globalCompositeOperation = "source-over";
-			ctx.strokeStyle = pencilColour;
-		}
+		
 		ctx.lineWidth = lineWidth[0];
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
 
 		const startDrawing = (e: { offsetX: number; offsetY: number }) => {
+			// Set up drawing styles
+			// if (activeTool === "eraser") {
+			if (isErasing == true) {
+				ctx.globalCompositeOperation = "destination-out";
+				// ctx.strokeStyle = "rgba(0,0,0,1)";
+``			} else {
+				ctx.globalCompositeOperation = "source-over";
+				// ctx.strokeStyle = pencilColour;
+			}
 			isDrawing = true;
 
 			[lastX, lastY] = [e.offsetX, e.offsetY];
@@ -196,26 +206,25 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
 			1,
 		);
 	};
+	const startErase =() =>{
+		isErasing=true
+		console.log((isErasing))
+		// setActiveTool("eraser")
+	}
+	const startPencil =() =>{
+		isErasing = false;
+		// setActiveTool("pencil")
+	}
 
 	return (
-		<div
-			className={`relative items-center gap-4 rounded-md border bg-background`}
-		>
-			<Toolbar
-				activeTool={activeTool}
-				setActiveTool={setActiveTool}
-				setPencilColour={setPencilColour}
-				clearCanvas={clearCanvas}
-				lineWidth={lineWidth}
-				setLineWidth={setLineWidth}
-				handleSave={handleSave}
-			/>
-			<canvas
+		<div>
+			<WhiteboardTools erase={startErase} pencil={startPencil} clear={clearCanvas} canvasRef={canvasRef} save={handleSave} />
+			<Separator/>
+				<canvas
 				ref={canvasRef}
-				width={width}
-				height={height}
-				style={{ backgroundColor: "white" }}
-			/>
+				height={(parent?.clientHeight)}
+				width={parent?.clientWidth}
+				style={{backgroundColor: "white" }}/>
 		</div>
 	);
 }
