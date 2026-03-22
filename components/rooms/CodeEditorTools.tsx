@@ -1,23 +1,35 @@
-import { IconMinus, IconPlus } from "@tabler/icons-react"
+import { IconDeviceFloppy, IconMinus, IconPlus } from "@tabler/icons-react"
 import { Button } from "../ui/button"
 import { ButtonGroup } from "../ui/button-group"
 import { Label } from "../ui/label"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Input } from "../ui/input"
-import { useState } from "react"
+import { RefObject, useEffect, useState } from "react"
 
 type CodeEditorToolsProps={
 	increase:()=>void
 	decrease:()=>void
 	inputSize:(n:number)=>void
+	languageUpdate:(s:string)=>void
+	selected:string
+	fileInputRef:RefObject<HTMLInputElement | null>
+	handleDownload:()=>void
+	handleSave:()=>void
+	handleUpload :(e: React.ChangeEvent<HTMLInputElement>)=>void
 }
-export function CodeEditorTools({inputSize, increase, decrease}: CodeEditorToolsProps) {
+
+const languageDropdownOptions = [
+    { label: "JavaScript", value: "js" },
+    { label: "Python", value: "py" },
+    { label: "Java", value: "java" },
+    { label: "C++", value: "cpp"},
+    { label: "JSON", value: "json"},
+]
+
+
+export function CodeEditorTools({inputSize, increase, decrease, languageUpdate, selected, fileInputRef, handleDownload, handleUpload,handleSave}: CodeEditorToolsProps) {
 	const [size, setSize] = useState<number>(12)
-	const Languages = [
-		{ label: "JavaScript", value: "js" },
-		{ label: "C", value: "c" },
-		{ label: "C#", value: "cs" },
-	]
+
 	const increaseSize = () => {
 		increase()
 		setSize(size+2)
@@ -40,17 +52,20 @@ export function CodeEditorTools({inputSize, increase, decrease}: CodeEditorTools
 					<div className="flex justify-between gap-2">
 						<Label htmlFor="select-language">Language</Label>
 					</div>
-					<Select items={Languages} defaultValue="js">
+					<Select 
+						value={selected} 
+                        onValueChange={languageUpdate}
+					>
 						<SelectTrigger className="w-[180px]">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
-								{Languages.map((item) => (
+								{languageDropdownOptions.map((item) => (
 									<SelectItem key={item.value} value={item.value}>
 										{item.label}
 									</SelectItem>
-								))}setSize(size+2)
+								))}
 							</SelectGroup>
 						</SelectContent>
 					</Select>
@@ -64,10 +79,35 @@ export function CodeEditorTools({inputSize, increase, decrease}: CodeEditorTools
 						aria-label="Media controls"
 						className="h-fit"
 					>
-						<Button variant="outline" size="icon" onClick={increaseSize}><IconPlus /></Button>
-						<Input type="numeric" value={size} onChange={updateSize}></Input>
 						<Button variant="outline" size="icon" onClick={decreaseSize}><IconMinus /></Button>
+							<Input type="numeric" value={size} onChange={updateSize}></Input>
+						<Button variant="outline" size="icon" onClick={increaseSize}><IconPlus /></Button>
 					</ButtonGroup>
+				</div>
+				<div>
+					<div className="mx-auto max-w-xs gap-3 flex row">
+						{/* Upload button */}
+						<Button className="h-9" onClick={() => fileInputRef.current?.click()}>
+							Upload Code
+						</Button>
+
+						{/* Download button */}
+						<Button className="h-9" onClick={handleDownload}>
+							Download Code
+						</Button>
+						
+						<Button className="h-9" onClick={handleSave}>
+							<IconDeviceFloppy />
+						</Button>
+					</div>
+					
+					<input
+						ref={fileInputRef}
+						type="file"
+						className="hidden"
+						accept=".js,.py,.java,.cpp,.json,.txt"
+						onChange={handleUpload}
+					/>
 				</div>
 			</div>
 		</header>

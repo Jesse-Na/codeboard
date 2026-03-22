@@ -22,10 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { saveCode } from "@/lib/actions";
 import { IconDeviceFloppy } from "@tabler/icons-react";
+import { CodeEditorTools } from "./CodeEditorTools";
 
 type CodeEditorProps = {
-	width?: number;
-	height?: number;
+    parentId:string
     theme?: "light" | "dark";
     language?: string;
 };
@@ -48,11 +48,13 @@ const languageExtensions: {
 	json: { extension: json(), file_ext: ".json" },
 };
 
-export default function CodeEditor({ width = 600, height = 400, theme = 'dark', language = 'js' }: CodeEditorProps) {
-    
+export default function CodeEditor({ parentId,theme = 'dark', language = 'js' }: CodeEditorProps) {
+
     const [codeValue, setCodeValue] = useState<string>("// loading...");
     const [langSelected, setLangSelected] = useState<string>(language);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [parent,setParent] = useState<HTMLElement|null>(null)
+    const [fontSize, setFontSize] = useState<number>(12)
 
 	const params = useParams();
 	const roomId = params.id as string;
@@ -64,7 +66,6 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
 
     useEffect(() => {
         setParent(document.getElementById(parentId));
-        console.log(parent)
     }, []);
 
 	useEffect(() => {
@@ -181,63 +182,41 @@ export default function CodeEditor({ width = 600, height = 400, theme = 'dark', 
 		}
 	};
 
+    const increaseFontSize = () =>{
+        setFontSize(fontSize+2)
+    }
+
+    const decreaseFontSize = () =>{
+        setFontSize(fontSize-2)
+    }
+
+    const setSize=(size:number)=>{
+        setFontSize(size)
+    }
+
+
     return (
-        <div className="flex flex-col items-start">
-            {/* Code editor */}
-            <CodeMirror 
-                value={codeValue}
-                width={`${width}px`}
-                height={`${height}px`}
-                theme={theme}
+		<div>
+			<CodeEditorTools 
+				inputSize={setSize}
+				increase={increaseFontSize}
+				decrease={decreaseFontSize}
+				languageUpdate={handleLangChange}
+				selected={langSelected}
+				handleDownload={handleDownload}
+				handleUpload={handleUpload} 
+				fileInputRef={fileInputRef}			
+				handleSave={handleSave}
+			/>
+			<CodeMirror 
+				value={codeValue}
+				height={parent?.clientHeight+'px'}
+				width={parent?.clientWidth+'px'}
+				theme={theme}
                 extensions={[basicSetup, languageExtensions[langSelected].extension]} 
+				style={{"fontSize": fontSize}}
                 onChange={handleChange} 
-            />
-
-            <div className="flex w-full items-center justify-between mb-1 pt-2">
-                {/* Language dropdown */}
-                <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium">Language:</span>
-                    
-                    <Select 
-                        value={langSelected} 
-                        onValueChange={handleLangChange}
-                    >
-                        <SelectTrigger className="w-[180px] h-8">
-                            <SelectValue placeholder="Language"/>
-                        </SelectTrigger>
-
-                        <SelectContent>
-                            <SelectGroup>
-                                {languageDropdownOptions.map((item) => (
-                                    <SelectItem key={item.value} value={item.value}>
-                                        {item.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="flex gap-2">
-                    {/* Upload button */}
-                    <Button className="h-9" onClick={() => fileInputRef.current?.click()}>
-                        Upload Code
-                    </Button>
-
-                    {/* Download button */}
-                    <Button className="h-9" onClick={handleDownload}>
-                        Download Code
-                    </Button>
-                </div>
-                
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept=".js,.py,.java,.cpp,.json,.txt"
-                    onChange={handleUpload}
-                />
-            </div>
-        </div>
+			/>
+    	</div>
 	);
 }

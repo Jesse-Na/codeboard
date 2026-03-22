@@ -6,8 +6,6 @@ import { DefaultEventsMap } from "socket.io";
 import io, { Socket } from "socket.io-client";
 import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
-// import Toolbar from "./WhiteboardToolbar";
-import Toolbar from "./WhiteboardToolbar";
 import { saveBoard } from "@/lib/actions";
 
 type BoardProps = {
@@ -30,6 +28,7 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 	useEffect(() => {
         setParent(document.getElementById(parentId));
     }, []);
+
 	const params = useParams();
 	const roomId = params.id as string;
 
@@ -38,16 +37,16 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 		DefaultEventsMap
 	> | null>(null);
 
-	// const clearCanvas = () => {
-	// 	if (!socket) return;
-	// 	const canvas: HTMLCanvasElement | null = canvasRef.current;
-	// 	if (!canvas) return;
-	// 	const ctx = canvas.getContext("2d");
-	// 	if (!ctx) return;
+	const clearCanvas = () => {
+		if (!socket) return;
+		const canvas: HTMLCanvasElement | null = canvasRef.current;
+		if (!canvas) return;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
 
-	// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	// 	socket.emit("clearCanvas", roomId);
-	// };
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		socket.emit("clearCanvas", roomId);
+	};
 
 	useEffect(() => {
 		const newSocket = io(
@@ -93,7 +92,6 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 
 	useEffect(() => {
 		let isDrawing = false;
-		let startErasing = true;
 		let lastX = 0;
 		let lastY = 0;
 
@@ -103,49 +101,40 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Set up drawing styles
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 4;
-		if (activeTool === "eraser") {
-			ctx.globalCompositeOperation = "destination-out";
-			ctx.strokeStyle = "rgba(0,0,0,1)";
-		} else {
-			ctx.globalCompositeOperation = "source-over";
-			ctx.strokeStyle = pencilColour;
-		}
+		
 		ctx.lineWidth = lineWidth[0];
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
 
 		const startDrawing = (e: { offsetX: number; offsetY: number }) => {
-			if (isErasing){
-				console.log('erasing')
-				startErasing = true
+			// Set up drawing styles
+			// if (activeTool === "eraser") {
+			if (isErasing == true) {
+				ctx.globalCompositeOperation = "destination-out";
+				// ctx.strokeStyle = "rgba(0,0,0,1)";
+``			} else {
+				ctx.globalCompositeOperation = "source-over";
+				// ctx.strokeStyle = pencilColour;
 			}
-			else{
-				isDrawing = true;
-				[lastX, lastY] = [e.offsetX, e.offsetY];
-			}
+			isDrawing = true;
+
+			[lastX, lastY] = [e.offsetX, e.offsetY];
 		};
 
 		const draw = (e: { offsetX: number; offsetY: number }) => {
-			if (isErasing && startErasing){
-				ctx.clearRect(lastX, lastY, ctx.lineWidth*2, ctx.lineWidth*2);
-				ctx.stroke()
-			}
-			else if (!isDrawing) return;
-			else{
-				ctx.beginPath();
-				ctx.moveTo(lastX, lastY);
-				ctx.lineTo(e.offsetX, e.offsetY);
-				ctx.stroke();
-			}
+			if (!isDrawing) return;
+
+			ctx.beginPath();
+			ctx.moveTo(lastX, lastY);
+			ctx.lineTo(e.offsetX, e.offsetY);
+			ctx.stroke();
+
 			[lastX, lastY] = [e.offsetX, e.offsetY];
 		};
 
 		const endDrawing = () => {
 			isDrawing = false;
-			startErasing = false;
+
 			sendCanvasData();
 		};
 
@@ -196,45 +185,6 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 		};
 	}, [canvasRef, socket, roomId, pencilColour, activeTool, lineWidth]);
 
-	const clearCanvas = () => {
-		if(!socket)return
-		const canvas: HTMLCanvasElement | null = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
-		
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		socket.emit("clearCanvas", roomId);
-	};
-
-	const startErase =() =>{
-		isErasing = true;
-	}
-	const startPencil =() =>{
-		isErasing = false;
-	}
-
-	const sendCanvasData = () => {
-		if(!socket)return
-		const canvas: HTMLCanvasElement | null = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
-
-		canvas.toBlob((blob) => {
-		console.log(blob)
-		if (blob) {
-				blob.arrayBuffer().then((buf) => {
-					socket.emit("canvasImage", buf, roomId);	
-				});
-			}
-		});
-	};
-
-	return (
-		<div>
-			<WhiteboardTools erase={startErase} pencil={startPencil} clear={clearCanvas} canvasRef={canvasRef} />
-			<Separator/>
 	const handleSave = () => {
 		if (!canvasRef.current) return;
 		const canvas = canvasRef.current;
@@ -256,42 +206,25 @@ export default function Board({ parentId, width = 600, height = 400 }: BoardProp
 			1,
 		);
 	};
+	const startErase =() =>{
+		isErasing=true
+		console.log((isErasing))
+		// setActiveTool("eraser")
+	}
+	const startPencil =() =>{
+		isErasing = false;
+		// setActiveTool("pencil")
+	}
 
 	return (
-		<div
-			className={`relative items-center gap-4 rounded-md border bg-background`}
-		>
-			<Toolbar
-				activeTool={activeTool}
-				setActiveTool={setActiveTool}
-				setPencilColour={setPencilColour}
-				clearCanvas={clearCanvas}
-				lineWidth={lineWidth}
-				setLineWidth={setLineWidth}
-				handleSave={handleSave}
-			/>
-			<canvas
+		<div>
+			<WhiteboardTools erase={startErase} pencil={startPencil} clear={clearCanvas} canvasRef={canvasRef} save={handleSave} />
+			<Separator/>
+				<canvas
 				ref={canvasRef}
 				height={(parent?.clientHeight)}
 				width={parent?.clientWidth}
 				style={{backgroundColor: "white" }}/>
-		{/* // <div
-		// 	className={`relative items-center gap-4 rounded-md border bg-background`}
-		// >
-		// 	<Toolbar
-		// 		activeTool={activeTool}
-		// 		setActiveTool={setActiveTool}
-		// 		setPencilColour={setPencilColour}
-		// 		clearCanvas={clearCanvas}
-		// 		lineWidth={lineWidth}
-		// 		setLineWidth={setLineWidth}
-		// 	/>
-		// 	<canvas
-		// 		ref={canvasRef}
-		// 		width={width}
-		// 		height={height}
-		// 		style={{ backgroundColor: "white" }}
-		// 	/> */}
 		</div>
 	);
 }

@@ -10,10 +10,10 @@ import {
 	IconPencil,
 	IconTrash,
 } from "@tabler/icons-react";
-import { PencilColour, Tool } from "@/components/Whiteboard";
+import { PencilColour, Tool } from "@/components/rooms/Whiteboard";
 
 export default function Toolbar({
-	activeTool,
+	// activeTool,
 	setActiveTool,
 	setPencilColour,
 	clearCanvas,
@@ -21,7 +21,7 @@ export default function Toolbar({
 	setLineWidth,
 	handleSave,
 }: {
-	activeTool: Tool;
+	// activeTool: Tool;
 	setActiveTool: (tool: Tool) => void;
 	setPencilColour: (colour: PencilColour) => void;
 	clearCanvas: () => void;
@@ -33,15 +33,16 @@ export default function Toolbar({
 	const [showLineWidthSlider, setShowLineWidthSlider] = useState(false);
 
 	const handlePencilClick = () => {
-		if (activeTool === "pencil") {
-			setShowColourPalette(!showColourPalette);
-			setShowLineWidthSlider(!showLineWidthSlider);
-			return;
-		}
+		setActiveTool("pencil")
+		// if (activeTool === "pencil") {
+		// 	setShowColourPalette(!showColourPalette);
+		// 	setShowLineWidthSlider(!showLineWidthSlider);
+		// 	return;
+		// }
 
-		setActiveTool("pencil");
-		setShowColourPalette(true);
-		setShowLineWidthSlider(true);
+		// setActiveTool("pencil");
+		// setShowColourPalette(true);
+		// setShowLineWidthSlider(true);
 	};
 
 	const changePencilColour = (colour: PencilColour) => {
@@ -49,14 +50,15 @@ export default function Toolbar({
 	};
 
 	const handleEraserClick = () => {
-		if (activeTool === "eraser") {
-			setShowLineWidthSlider(!showLineWidthSlider);
-			return;
-		}
+		setActiveTool("eraser")
+		// if (activeTool === "eraser") {
+		// 	setShowLineWidthSlider(!showLineWidthSlider);
+		// 	return;
+		// }
 
-		setActiveTool("eraser");
-		setShowColourPalette(false);
-		setShowLineWidthSlider(true);
+		// setActiveTool("eraser");
+		// setShowColourPalette(false);
+		// setShowLineWidthSlider(true);
 	};
 
 	return (
