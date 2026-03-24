@@ -35,6 +35,7 @@ const languageDropdownOptions = [
     { label: "Python", value: "py" },
     { label: "Java", value: "java" },
     { label: "C++", value: "cpp"},
+	{ label: "C", value: "c"},
     { label: "JSON", value: "json"},
 ]
 
@@ -45,6 +46,7 @@ const languageExtensions: {
 	py: { extension: python(), file_ext: ".py" },
 	java: { extension: java(), file_ext: ".java" },
 	cpp: { extension: cpp(), file_ext: ".cpp" },
+	c: { extension: cpp(), file_ext: ".c" },
 	json: { extension: json(), file_ext: ".json" },
 };
 
