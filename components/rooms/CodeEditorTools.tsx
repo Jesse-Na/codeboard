@@ -23,6 +23,7 @@ const languageDropdownOptions = [
     { label: "Python", value: "py" },
     { label: "Java", value: "java" },
     { label: "C++", value: "cpp"},
+	{ label: "C", value: "c"},
     { label: "JSON", value: "json"},
 ]
 
@@ -105,7 +106,7 @@ export function CodeEditorTools({inputSize, increase, decrease, languageUpdate, 
 						ref={fileInputRef}
 						type="file"
 						className="hidden"
-						accept=".js,.py,.java,.cpp,.json,.txt"
+						accept=".js,.py,.java,.cpp,.c,.json,.txt"
 						onChange={handleUpload}
 					/>
 				</div>
