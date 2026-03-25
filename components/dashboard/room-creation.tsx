@@ -10,9 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 import { createRoom } from "@/lib/actions";
@@ -22,47 +22,51 @@ import { useRouter } from "next/navigation";
 import { LanguageSelector } from "../languages";
 
 interface RoomCreationProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
-export function RoomCreation({open, onClose}: RoomCreationProps) {
+export function RoomCreation({ open, onClose }: RoomCreationProps) {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
-  const { userId } = useAuthContext();
-  const [language, setLanguage] = useState("js")
+  const { profile } = useAuthContext();
+  const [language, setLanguage] = useState("js");
 
   const handleCreate = async (formData: FormData) => {
-    const testUserId = "test-user-id"
-    
-    if (!userId) {
+    if (!profile?.id) {
       return setMessage("You must be logged in");
     }
 
-    const name = formData.get("name") as string
-    const desc = formData.get("desc") as string
+    const name = formData.get("name") as string;
+    const desc = formData.get("desc") as string;
 
     if (!name || name.trim() === "") {
-    	return setMessage("Room name is required");
-  	}
+      return setMessage("Room name is required");
+    }
 
     try {
-      const roomId = await createRoom({ownerId: testUserId, name, desc, language});
+      const roomId = await createRoom({
+        ownerId: profile.id,
+        name,
+        desc,
+        language,
+      });
 
-      onClose()
+      onClose();
       setTimeout(() => {
-	 			router.push(`/rooms/${roomId}`);
-	 		}, 1000);
-     
+        router.push(`/rooms/${roomId}`);
+      }, 1000);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Error creating room");
+      setMessage(
+        error instanceof Error ? error.message : "Error creating room",
+      );
     }
   };
 
   return (
-  <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-        <DialogContent className="sm:max-w-sm">
-          <form action={handleCreate}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-sm">
+        <form action={handleCreate}>
           <DialogHeader>
             <DialogTitle>Create a Room</DialogTitle>
             <DialogDescription>
@@ -73,22 +77,31 @@ export function RoomCreation({open, onClose}: RoomCreationProps) {
           <FieldGroup className="gap-4 py-4">
             <Field>
               <Label htmlFor="name">Room Name</Label>
-              <Input id="name" name="name" placeholder="e.g. Lecture 5" className="text-muted-foreground"/>
+              <Input
+                id="name"
+                name="name"
+                placeholder="e.g. Lecture 5"
+                className="text-muted-foreground"
+              />
             </Field>
             <Field>
               <Label htmlFor="name-1">Description</Label>
-              <Input id="desc" name="desc" placeholder="e.g. Intro to Python" className="text-muted-foreground"/>
+              <Input
+                id="desc"
+                name="desc"
+                placeholder="e.g. Intro to Python"
+                className="text-muted-foreground"
+              />
             </Field>
-    
-          {/* Language Dropdown */}
+
+            {/* Language Dropdown */}
             <Field>
               <Label htmlFor="language">Language</Label>
-                <LanguageSelector value={language} onValueChange={setLanguage}/>
+              <LanguageSelector value={language} onValueChange={setLanguage} />
             </Field>
 
             {message && <p className="text-sm text-red-800">{message}</p>}
           </FieldGroup>
-
 
           {/* Private or Public Room - Future Implementation */}
 
@@ -98,10 +111,8 @@ export function RoomCreation({open, onClose}: RoomCreationProps) {
             </DialogClose>
             <Button type="submit">Create Room</Button>
           </DialogFooter>
-          
-
-          </form>
-        </DialogContent>
-  </Dialog>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

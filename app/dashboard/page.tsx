@@ -1,10 +1,7 @@
-import { AppSidebar } from "@/components/dashboard/app-sidebar"
-import { RoomCards } from "@/components/dashboard/room-cards"
-import { SiteHeader } from "@/components/dashboard/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/dashboard/app-sidebar";
+import { RoomCards } from "@/components/dashboard/room-cards";
+import { SiteHeader } from "@/components/dashboard/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
   return (
@@ -28,5 +25,5 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
