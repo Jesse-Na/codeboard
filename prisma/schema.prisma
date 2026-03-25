@@ -27,6 +27,7 @@ model Room {
   ownerId  String
   isActive Boolean  @default(true)
   desc     String?
+  language String
   records  Record[]
 }
 

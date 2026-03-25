@@ -17,10 +17,12 @@ import { createRoom } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Room } from "@/generated/prisma/client";
+import { RoomCreation } from "./room-creation";
 
 export function RoomCards() {
 	const { userId } = useAuthContext();
 	const [rooms, setRooms] = useState<Room[]>([]);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		getRooms();
@@ -41,18 +43,18 @@ export function RoomCards() {
 		}
 	};
 
-	const handleCreateRoom = async () => {
-		if (!userId) return;
+	// const handleCreateRoom = async () => {
+	// 	if (!userId) return;
 
-		try {
-			const roomId = await createRoom(userId);
-			setTimeout(() => {
-				window.location.href = `/rooms/${roomId}`;
-			}, 1000);
-		} catch (error) {
-			console.error("Error creating room:", error);
-		}
-	};
+	// 	try {
+	// 		const roomId = await createRoom(userId);
+	// 		setTimeout(() => {
+	// 			window.location.href = `/rooms/${roomId}`;
+	// 		}, 1000);
+	// 	} catch (error) {
+	// 		console.error("Error creating room:", error);
+	// 	}
+	// };
 
 	return (
 		<div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
@@ -85,12 +87,15 @@ export function RoomCards() {
 				<Button
 					variant="ghost"
 					className="flex flex-col gap-2 h-full w-full hover:bg-transparent"
-					onClick={handleCreateRoom}
+					onClick={() => setModalOpen(true)}
 				>
 					<Plus className="w-15 h-15 text-muted-foreground" />
 					<p>Create New Room</p>
 				</Button>
 			</Card>
+
+			{/* Room Creation Modal */}
+			<RoomCreation open={modalOpen} onClose={() => setModalOpen(false)} />
 		</div>
 	);
 }

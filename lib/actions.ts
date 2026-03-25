@@ -4,7 +4,14 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "./prisma";
 import { s3Client } from "./spaces";
 
-export async function createRoom(ownerId: string): Promise<number> {
+type createRoomProps = {
+	ownerId: string,
+	name: string,
+	desc?: string,
+	language: string,
+}
+
+export async function createRoom({ownerId, name, desc, language}: createRoomProps): Promise<number> {
 	// check if user exists
 	if (ownerId === "test-user-id") {
 		console.warn(
@@ -35,6 +42,9 @@ export async function createRoom(ownerId: string): Promise<number> {
 	const room = await prisma.room.create({
 		data: {
 			ownerId,
+			name,
+			desc,
+			language,
 		},
 	});
 
