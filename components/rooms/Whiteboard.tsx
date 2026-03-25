@@ -9,28 +9,22 @@ import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
 
 type BoardProps = {
-  parentId: string;
   height?: number;
   width?: number;
 };
 
-export type Tool = "pencil" | "eraser";
-export type PencilColour = "black" | "red" | "blue" | "green";
+export enum Tool {
+  POINTER = "pointer",
+  PENCIL = "pencil",
+  ERASER = "eraser",
+}
+// export type PencilColour = "black" | "red" | "blue" | "green";
 
-export default function Board({
-  parentId,
-  width = 600,
-  height = 400,
-}: BoardProps) {
-  const [activeTool, setActiveTool] = useState<Tool>("pencil");
-  const [pencilColour, setPencilColour] = useState<PencilColour>("black");
+export default function Board({ width = 600, height = 400 }: BoardProps) {
+  const [activeTool, setActiveTool] = useState<Tool>(Tool.PENCIL);
+  const [pencilColour, setPencilColour] = useState<string>("black");
   const [lineWidth, setLineWidth] = useState([2]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [parent, setParent] = useState<HTMLElement | null>(null);
-  let isErasing = false;
-  useEffect(() => {
-    setParent(document.getElementById(parentId));
-  }, []);
 
   const params = useParams();
   const roomId = params.id as string;
@@ -98,6 +92,7 @@ export default function Board({
     let lastX = 0;
     let lastY = 0;
 
+    if (activeTool === Tool.POINTER) return;
     if (!socket) return;
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     if (!canvas) return;
@@ -110,13 +105,12 @@ export default function Board({
 
     const startDrawing = (e: { offsetX: number; offsetY: number }) => {
       // Set up drawing styles
-      // if (activeTool === "eraser") {
-      if (isErasing == true) {
+      if (activeTool === Tool.ERASER) {
         ctx.globalCompositeOperation = "destination-out";
-        // ctx.strokeStyle = "rgba(0,0,0,1)";
+        ctx.strokeStyle = "rgba(0,0,0,1)";
       } else {
         ctx.globalCompositeOperation = "source-over";
-        // ctx.strokeStyle = pencilColour;
+        ctx.strokeStyle = pencilColour;
       }
       isDrawing = true;
 
@@ -208,21 +202,14 @@ export default function Board({
       1,
     );
   };
-  const startErase = () => {
-    isErasing = true;
-    console.log(isErasing);
-    // setActiveTool("eraser")
-  };
-  const startPencil = () => {
-    isErasing = false;
-    // setActiveTool("pencil")
-  };
 
   return (
-    <div>
+    <div className="h-full">
       <WhiteboardTools
-        erase={startErase}
-        pencil={startPencil}
+        activeTool={activeTool}
+        setActiveTool={setActiveTool}
+        setPencilColour={setPencilColour}
+        setLinewidth={setLineWidth}
         clear={clearCanvas}
         canvasRef={canvasRef}
         save={handleSave}
@@ -230,9 +217,15 @@ export default function Board({
       <Separator />
       <canvas
         ref={canvasRef}
-        height={parent?.clientHeight}
-        width={parent?.clientWidth}
-        style={{ backgroundColor: "white" }}
+        height={window.innerHeight - 150}
+        width={window.innerWidth}
+        style={{
+          backgroundColor: "transparent",
+          left: 0,
+          top: 150,
+          position: "absolute",
+          pointerEvents: activeTool === Tool.POINTER ? "none" : "auto",
+        }}
       />
     </div>
   );
