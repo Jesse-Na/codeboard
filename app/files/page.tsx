@@ -17,9 +17,6 @@ export default function Page() {
 				<SiteHeader />
 				<div className="flex flex-1 flex-col">
 					<div className="@container/main flex flex-1 flex-col gap-2">
-						<p className="font-semibold px-4 py-4 lg:px-6">
-							My Files
-						</p>
 					</div>
 				</div>
 			</SidebarInset>

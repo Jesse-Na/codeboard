@@ -26,13 +26,13 @@ type deleteRoomProp= {
 
 export function RoomDeletion({onDelete, children}: deleteRoomProp ) {
     return (
+        <AlertDialog>
     <ContextMenu>
-        <ContextMenuTrigger>
+        <ContextMenuTrigger asChild>
             {children}
         </ContextMenuTrigger>
 
       <ContextMenuContent>
-        <AlertDialog>
             <AlertDialogTrigger asChild>
                 <ContextMenuItem onSelect={(e) => e.preventDefault()}>
                 <TrashIcon className="mr-2 h-4 w-4" />
@@ -53,10 +53,10 @@ export function RoomDeletion({onDelete, children}: deleteRoomProp ) {
                     <AlertDialogAction onClick={onDelete} variant="destructive">Delete</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog>
 
       </ContextMenuContent>
     </ContextMenu>
+    </AlertDialog>
 
     )
 }
