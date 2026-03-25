@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
 import { RoomCards } from "@/components/dashboard/room-cards"
 import { SiteHeader } from "@/components/dashboard/site-header"
+import { MyRooms } from "@/components/my-rooms/my-rooms"
 import {
   SidebarInset,
   SidebarProvider,
@@ -21,7 +22,9 @@ export default function Page() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <p className="font-semibold px-4 py-4 lg:px-6">My Rooms</p>
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <MyRooms />
+            </div>
           </div>
         </div>
       </SidebarInset>
