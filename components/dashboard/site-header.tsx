@@ -30,7 +30,7 @@ export function SiteHeader() {
         <h1 className="text-base font-medium">{actualName(pathName)}</h1>
 
         <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" className="hidden sm:flex" onClick={() => setModalOpen(true)}>
+          <Button size="sm" className="hidden sm:flex cursor-pointer" onClick={() => setModalOpen(true)}>
             <IconCirclePlusFilled className="mr-2" />
               Create New Room
           </Button>

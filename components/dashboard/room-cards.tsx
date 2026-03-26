@@ -41,10 +41,10 @@ export function RoomCards() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
+    <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       {/* Rooms */}
       {rooms.map((room) => (
-        <Card key={room.id} className="@container/card">
+        <Card key={room.id} className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]">
           <CardHeader>
             <CardTitle className="text-xl font-semibold">{room.name}</CardTitle>
             <CardDescription>Created By: {room.ownerId}</CardDescription>
@@ -55,7 +55,7 @@ export function RoomCards() {
           </CardContent>
 
           <CardFooter>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full cursor-pointer">
               <Link href={`/rooms/${room.id}`}>Open</Link>
             </Button>
           </CardFooter>
@@ -63,10 +63,11 @@ export function RoomCards() {
       ))}
 
       {/* Create Room Card */}
-      <Card className="@container/card justify-center items-center cursor-pointer hover:bg-primary/5 transition-colors min-h-[160px]">
+      <Card className="@container/card justify-center items-center hover:bg-primary/5 transition-colors min-h-[160px] bg-gradient-to-t from-primary/5 to-card">
+     
         <Button
           variant="ghost"
-          className="flex flex-col gap-2 h-full w-full hover:bg-transparent"
+          className="flex flex-col gap-2 h-full w-full cursor-pointer hover:bg-transparent"
           onClick={() => setModalOpen(true)}
         >
           <Plus className="w-15 h-15 text-muted-foreground" />

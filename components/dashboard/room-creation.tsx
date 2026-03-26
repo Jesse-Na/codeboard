@@ -37,6 +37,8 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
       return setMessage("You must be logged in");
     }
 
+    // const id = "test-user-id";
+
     const name = formData.get("name") as string;
     const desc = formData.get("desc") as string;
 
@@ -47,6 +49,7 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
     try {
       const roomId = await createRoom({
         ownerId: profile.id,
+        // ownerId: id,
         name,
         desc,
         language,
@@ -107,9 +110,9 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Create Room</Button>
+            <Button type="submit" className="cursor-pointer">Create Room</Button>
           </DialogFooter>
         </form>
       </DialogContent>
