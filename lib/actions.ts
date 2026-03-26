@@ -183,3 +183,19 @@ export async function getFiles(roomId: number) {
 
   return { codeFile, boardFile };
 }
+
+export async function getAllFiles(ownerId: string) {
+  const records = await prisma.record.findMany({
+    where: {
+      room: { ownerId }
+    },
+    include: {
+      room: { select: { name: true } }
+    },
+    orderBy: { 
+      lastUpdated: "desc" 
+    }
+  })
+
+  return records
+}
