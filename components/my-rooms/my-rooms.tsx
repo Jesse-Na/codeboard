@@ -20,7 +20,6 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Room } from "@/generated/prisma/client";
 import { RoomCreation } from "../dashboard/room-creation";
-import { RoomCards } from "../dashboard/room-cards";
 
 export function MyRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -38,7 +37,7 @@ export function MyRooms() {
   const getRooms = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/rooms`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/my-rooms`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch rooms");
@@ -56,9 +55,9 @@ export function MyRooms() {
       {/* Rooms */}
       {rooms.map((room) => (
         <RoomDeletion key={room.id} onDelete={() => handleDelete(room.id)}>
-          <Card className="@container/card">
+          <Card className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold">
+              <CardTitle className="text-xl cursor-pointer font-semibold">
                 {room.name}
               </CardTitle>
               <CardDescription>Created By: {room.ownerId}</CardDescription>
@@ -78,10 +77,10 @@ export function MyRooms() {
       ))}
 
       {/* Create Room Card */}
-      <Card className="@container/card justify-center items-center cursor-pointer hover:bg-primary/5 transition-colors min-h-[160px]">
+      <Card className="@container/card justify-center items-center hover:bg-primary/5 transition-colors min-h-[160px]">
         <Button
           variant="ghost"
-          className="flex flex-col gap-2 h-full w-full hover:bg-transparent"
+          className="flex flex-col gap-2 h-full w-full cursor-pointer hover:bg-transparent"
           onClick={() => setModalOpen(true)}
         >
           <Plus className="w-15 h-15 text-muted-foreground" />
