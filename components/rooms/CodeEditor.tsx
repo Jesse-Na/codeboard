@@ -57,6 +57,7 @@ export default function CodeEditor({ parentId,theme = 'dark', language = 'js' }:
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [parent,setParent] = useState<HTMLElement|null>(null)
     const [fontSize, setFontSize] = useState<number>(12)
+	const [width, setWidth] = useState<number>(600)
 
 	const params = useParams();
 	const roomId = params.id as string;
@@ -68,7 +69,15 @@ export default function CodeEditor({ parentId,theme = 'dark', language = 'js' }:
 
     useEffect(() => {
         setParent(document.getElementById(parentId));
-    }, []);
+		updateWidth()
+		if (parent)
+			new ResizeObserver(updateWidth).observe(parent)
+    }, [parent]);
+
+
+	const updateWidth = () =>{
+		setWidth(parent?.clientWidth || width)
+	}
 
 	useEffect(() => {
 		const newSocket = io(
@@ -213,7 +222,7 @@ export default function CodeEditor({ parentId,theme = 'dark', language = 'js' }:
 			<CodeMirror 
 				value={codeValue}
 				height={parent?.clientHeight+'px'}
-				width={parent?.clientWidth+'px'}
+				width={width+'px'}
 				theme={theme}
                 extensions={[basicSetup, languageExtensions[langSelected].extension]} 
 				style={{"fontSize": fontSize}}
