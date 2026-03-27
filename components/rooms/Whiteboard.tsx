@@ -21,7 +21,7 @@ export enum Tool {
 // export type PencilColour = "black" | "red" | "blue" | "green";
 
 export default function Board({ width = 600, height = 400 }: BoardProps) {
-  const [activeTool, setActiveTool] = useState<Tool>(Tool.PENCIL);
+  const [activeTool, setActiveTool] = useState<Tool>(Tool.POINTER);
   const [pencilColour, setPencilColour] = useState<string>("black");
   const [lineWidth, setLineWidth] = useState([2]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -217,7 +217,10 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
       <Separator />
       <canvas
         ref={canvasRef}
-        height={window.innerHeight - 150}
+        height={Math.max(
+          window.innerHeight,
+          document.getElementById("whiteboardui")?.offsetHeight ?? 0,
+        )}
         width={window.innerWidth}
         style={{
           backgroundColor: "transparent",

@@ -39,7 +39,7 @@ export function WhiteboardTools({
   return (
     <header
       style={{ backgroundColor: "rgb(226, 232, 240)" }}
-      className="flex items-center py-4"
+      className="sticky top-0 items-center py-4"
     >
       <div className="flex w-full items-center gap-1 px-2 lg:px-6">
         <div className="mx-auto grid w-full max-w-xs gap-3">
