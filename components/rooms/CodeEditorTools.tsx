@@ -47,7 +47,7 @@ export function CodeEditorTools({inputSize, increase, decrease, languageUpdate, 
 	}
 
   	return (
-		<header style={{backgroundColor:"rgb(144, 161, 185)"}} className="flex gap-2 py-4">
+		<header style={{backgroundColor:"rgb(144, 161, 185)"}} className="z-40 sticky top-0 flex gap-2 py-4">
 			<div className="flex w-full gap-1 px-2 lg:gap-2 lg:px-6">
 				<div className="mx-auto grid w-full max-w-xs gap-3">
 					<div className="flex justify-between gap-2">

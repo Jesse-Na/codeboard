@@ -216,6 +216,7 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
       />
       <Separator />
       <canvas
+        className="z-0"
         ref={canvasRef}
         height={window.innerHeight - 150}
         width={window.innerWidth}

@@ -220,6 +220,7 @@ export default function CodeEditor({ parentId,theme = 'dark', language = 'js' }:
 				handleSave={handleSave}
 			/>
 			<CodeMirror 
+				className="z-0"
 				value={codeValue}
 				height={parent?.clientHeight+'px'}
 				width={width+'px'}
