@@ -1,6 +1,6 @@
 ## Getting Started
 
-Create a `.env` file with two variables, for example:
+Create a `.env` file with the following variables, for example:
 
 ```
 DATABASE_URL="postgresql://<user>:<password>@localhost:5432/codeboard?schema=public"
@@ -15,18 +15,29 @@ BETTER_AUTH_SECRET=44C1P97Sia4TzF41wmbdYQsbcwTYXi0d
 BETTER_AUTH_URL=http://localhost:3000
 ```
 
-Please change the BETTER_AUTH_SECRET to your own. You can use `openssl rand -base64 32` to generate one.
+Run `npm install` to install packages and depedencies.
 
-Run `npm install`.
+Create a postgresql database called codeboard that your user can access.
+Ensure the postgres service is running, then run the following:
 
-Create a postgresql database called codeboard that your user can access, and replace the
-DATABASE_URL accordingly.
+- Open the postgres CLI using `psql postgres`.
+- Inside `psql`, run `CREATE DATABASE codeboard;`.
+- Modify the `DATABASE_URL` in the `.env` file with the appropriate credentials.
+
+Create a S3 bucket with DigitalOcean Spaces.
+
+- Set the region to `TOR1` and name the bucket `codeboard-files`.
+- For ease of setup, do not enable CDN.
+- Go to settings and generate an access key for all buckets and with all permissions.
+- Modify the `SPACES_KEY` and `SPACES_SECRET` in the `.env` file accordingly.
+
+Generate a secret key for Better Auth, you may use the command `openssl rand -base64 32`.
 
 Run `npx auth@latest generate` to generate Better Auth schemas.
 
-Run `npx prisma migrate dev --name init` to apply SQL migrations.
+Run `npx prisma migrate dev` to apply SQL migrations.
 
-- Run `npx prisma migrate dev` and `npx prisma generate` whenever there was a change to `schema.prisma`
+Run `npx prisma migrate dev` and `npx prisma generate` whenever there was a change to `schema.prisma`
 
 Run the development server:
 
