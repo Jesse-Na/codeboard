@@ -1,6 +1,6 @@
 "use server";
 
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "./prisma";
 import { s3Client } from "./spaces";
 
@@ -184,18 +184,71 @@ export async function getFiles(roomId: number) {
   return { codeFile, boardFile };
 }
 
+export type S3Record = {
+  code: Uint8Array<ArrayBufferLike> | null;
+  board: Uint8Array<ArrayBufferLike> | null;
+  room: {
+    name: string;
+  };
+  id: number;
+  codeFile: string | null;
+  boardFile: string | null;
+  lastUpdated: Date;
+  roomId: number;
+};
+
 export async function getAllFiles(ownerId: string) {
   const records = await prisma.record.findMany({
     where: {
-      room: { ownerId }
+      room: { ownerId },
     },
     include: {
-      room: { select: { name: true } }
+      room: { select: { name: true } },
     },
-    orderBy: { 
-      lastUpdated: "desc" 
-    }
-  })
+    orderBy: {
+      lastUpdated: "desc",
+    },
+  });
 
-  return records
+  const codeFiles = await Promise.all(
+    records.map(async (record) => {
+      if (record.codeFile) {
+        const code = await s3Client.send(
+          new GetObjectCommand({
+            Bucket: process.env.SPACES_BUCKET!,
+            Key: record.codeFile,
+          }),
+        );
+
+        const body = await code.Body?.transformToByteArray();
+
+        return { code: body ?? null };
+      }
+      return { code: null };
+    }),
+  );
+
+  const boardFiles = await Promise.all(
+    records.map(async (record) => {
+      if (record.boardFile) {
+        const board = await s3Client.send(
+          new GetObjectCommand({
+            Bucket: process.env.SPACES_BUCKET!,
+            Key: record.boardFile,
+          }),
+        );
+
+        const body = await board.Body?.transformToByteArray();
+
+        return { board: body ?? null };
+      }
+      return { board: null };
+    }),
+  );
+
+  return records.map((record, index) => ({
+    ...record,
+    code: codeFiles[index].code,
+    board: boardFiles[index].board,
+  }));
 }
