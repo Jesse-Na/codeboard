@@ -2,6 +2,8 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
+import RecordsTable from "@/components/files/record";
+
 export default function Page() {
 	return (
 		<SidebarProvider
@@ -15,10 +17,9 @@ export default function Page() {
 			<AppSidebar variant="inset" />
 			<SidebarInset>
 				<SiteHeader />
-				<div className="flex flex-1 flex-col">
-					<div className="@container/main flex flex-1 flex-col gap-2">
-					</div>
-				</div>
+					<div className="px-4 py-6 lg:px-6">
+      					<RecordsTable />
+    				</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
