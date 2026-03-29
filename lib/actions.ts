@@ -153,37 +153,6 @@ export async function saveBoard(roomId: number, board: File) {
   }
 }
 
-export async function getFiles(roomId: number) {
-  const room = await prisma.room.findUnique({
-    where: {
-      id: roomId,
-    },
-  });
-
-  if (!room) {
-    throw new Error("Room not found");
-  }
-
-  const records = await prisma.record.findMany({
-    where: {
-      roomId: room.id,
-    },
-    orderBy: {
-      lastUpdated: "desc",
-    },
-  });
-
-  if (records.length === 0) {
-    throw new Error("No records found for room");
-  }
-
-  const codeFile = records.find((record) => record.codeFile)?.codeFile || null;
-  const boardFile =
-    records.find((record) => record.boardFile)?.boardFile || null;
-
-  return { codeFile, boardFile };
-}
-
 export type S3Record = {
   code: Uint8Array<ArrayBufferLike> | null;
   board: Uint8Array<ArrayBufferLike> | null;
