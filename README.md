@@ -11,13 +11,20 @@ SPACES_SECRET=your-secret-key
 SPACES_REGION=tor1
 SPACES_BUCKET=codeboard-files
 SPACES_ENDPOINT=https://tor1.digitaloceanspaces.com
+BETTER_AUTH_SECRET=44C1P97Sia4TzF41wmbdYQsbcwTYXi0d
+BETTER_AUTH_URL=http://localhost:3000
 ```
+
+Please change the BETTER_AUTH_SECRET to your own. You can use `openssl rand -base64 32` to generate one.
 
 Run `npm install`.
 
-Create a postgresql database called codeboard that your user can access.
+Create a postgresql database called codeboard that your user can access, and replace the
+DATABASE_URL accordingly.
 
-Run `npx prisma migrate dev --name init`.
+Run `npx auth@latest generate` to generate Better Auth schemas.
+
+Run `npx prisma migrate dev --name init` to apply SQL migrations.
 
 - Run `npx prisma migrate dev` and `npx prisma generate` whenever there was a change to `schema.prisma`
 
