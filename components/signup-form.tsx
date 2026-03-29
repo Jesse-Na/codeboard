@@ -1,26 +1,55 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { signUpWithEmail } from "@/lib/auth-actions";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
+
+  const handleSignUp = async (formData: FormData) => {
+    const result = await signUpWithEmail(formData);
+    if (!result.success) {
+      // TODO: print error
+      return;
+    }
+
+    const response = await authClient.signIn.email({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
+
+    if (response.error) {
+      // TODO: print error
+      return;
+    }
+
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 1000);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -31,16 +60,23 @@ export function SignupForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={handleSignUp}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe" required />
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -50,7 +86,12 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required />
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                    />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
@@ -63,8 +104,8 @@ export function SignupForm({
                   Must be at least 8 characters long.
                 </FieldDescription>
               </Field>
-              <FieldSeparator>Or continue with</FieldSeparator>
-          <Field className="grid gap-4 sm:grid-cols-2">
+              {/*<FieldSeparator>Or continue with</FieldSeparator>*/}
+              {/*<Field className="grid gap-4 sm:grid-cols-2">
             <Button variant="outline" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
@@ -83,12 +124,12 @@ export function SignupForm({
               </svg>
               Google
             </Button>
-          </Field>
+          </Field>*/}
 
               <Field>
                 <Button type="submit">Create Account</Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <Link href={'/login'}>Sign in</Link>
+                  Already have an account? <Link href={"/login"}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -96,5 +137,5 @@ export function SignupForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

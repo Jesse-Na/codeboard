@@ -13,22 +13,25 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export default function RecordsTable() {
-  // COMMENT OUT LATERRR
-  const testUserId = "test-user-id";
+  const { data: session } = authClient.useSession();
+
   const [records, setRecords] = useState<S3Record[]>([]);
 
   console.log(records);
 
   useEffect(() => {
+    if (!session) return;
+
     const fetchRecords = async () => {
-      const records = await getAllFiles(testUserId);
+      const records = await getAllFiles(session.user.id);
       setRecords(records);
     };
 
     fetchRecords();
-  }, []);
+  }, [session]);
 
   const handleCodeDownload = (code: Uint8Array, codeFile: string) => {
     const blob = new Blob([new Uint8Array(code)], { type: "text/plain" });

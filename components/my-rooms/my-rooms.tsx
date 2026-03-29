@@ -15,29 +15,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "../ui/button";
-import { createRoom } from "@/lib/actions";
 import { useEffect, useState } from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { Room } from "@/generated/prisma/client";
+import { Room, User } from "@/generated/prisma/client";
 import { RoomCreation } from "../dashboard/room-creation";
+import { authClient } from "@/lib/auth-client";
+
+type RoomWithOwner = Room & { owner: User };
 
 export function MyRooms() {
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<RoomWithOwner[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const { data: session } = authClient.useSession();
 
-  const handleDelete = async (id: number) => {
-    await deleteRoom(id);
-    getRooms();
-  };
-
-  useEffect(() => {
-    getRooms();
-  }, []);
-
-  const getRooms = async () => {
+  const getRooms = async (userId: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/my-rooms`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/rooms?userId=${userId}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch rooms");
@@ -47,6 +40,17 @@ export function MyRooms() {
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
+  };
+
+  useEffect(() => {
+    if (!session) return;
+
+    getRooms(session.user.id);
+  }, [session]);
+
+  const handleDelete = async (id: number) => {
+    await deleteRoom(id);
+    setRooms(rooms.filter((room) => room.id !== id));
   };
 
   return (
@@ -60,7 +64,7 @@ export function MyRooms() {
               <CardTitle className="text-xl cursor-pointer font-semibold">
                 {room.name}
               </CardTitle>
-              <CardDescription>Created By: {room.ownerId}</CardDescription>
+              <CardDescription>Created By: {room.owner.name}</CardDescription>
             </CardHeader>
 
             <CardContent className="flex-1">

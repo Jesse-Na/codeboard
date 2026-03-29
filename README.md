@@ -1,4 +1,4 @@
-## Getting Started
+### Environment Setup and Configuration
 
 Create a `.env` file with the following variables, for example:
 
@@ -17,6 +17,7 @@ BETTER_AUTH_URL=http://localhost:3000
 
 Run `npm install` to install packages and depedencies.
 
+#### Database Initialization
 Create a postgresql database called codeboard that your user can access.
 Ensure the postgres service is running, then run the following:
 
@@ -24,6 +25,7 @@ Ensure the postgres service is running, then run the following:
 - Inside `psql`, run `CREATE DATABASE codeboard;`.
 - Modify the `DATABASE_URL` in the `.env` file with the appropriate credentials.
 
+#### Cloud Storage Configuration
 Create a S3 bucket with DigitalOcean Spaces.
 
 - Set the region to `TOR1` and name the bucket `codeboard-files`.
@@ -31,18 +33,18 @@ Create a S3 bucket with DigitalOcean Spaces.
 - Go to settings and generate an access key for all buckets and with all permissions.
 - Modify the `SPACES_KEY` and `SPACES_SECRET` in the `.env` file accordingly.
 
+#### BetterAuth
 Generate a secret key for Better Auth, you may use the command `openssl rand -base64 32`.
+
+### Local Development and Testing
+For first-time set up or whenever you make a change to `schema.prisma`, run the following:
 
 Run `npx auth@latest generate` to generate Better Auth schemas.
 
 Run `npx prisma migrate dev` to apply SQL migrations.
 
-Run `npx prisma migrate dev` and `npx prisma generate` whenever there was a change to `schema.prisma`
+Run `npx prisma generate` 
 
-Run the development server:
+Start the development server for testing `npm run dev`.
 
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.

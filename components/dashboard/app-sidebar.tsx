@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   IconDashboard,
   IconDatabase,
@@ -10,11 +10,11 @@ import {
   IconReport,
   IconSearch,
   IconUsers,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/dashboard/nav-documents"
-import { NavMain } from "@/components/dashboard/nav-main"
-import { NavUser } from "@/components/dashboard/nav-user"
+import { NavDocuments } from "@/components/dashboard/nav-documents";
+import { NavMain } from "@/components/dashboard/nav-main";
+import { NavUser } from "@/components/dashboard/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -23,44 +23,38 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import Link from "next/link"
-
-const data = {
-  user: {
-    name: "codeboard",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconDashboard,
-    },
-  
-    {
-      title: "My Workspace",
-      url: "/my-rooms",
-      icon: IconFolder,
-    },
-    {
-      title: "My Files",
-      url: "/files",
-      icon: IconFileDescription,
-    },
-    
-  ],
-  // documents: [
-  //   {
-  //     name: "My Files",
-  //     url: "#",
-  //     icon: IconFileDescription,
-  //   },
-  // ],
-}
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = authClient.useSession();
+
+  const data = {
+    user: {
+      name: session?.user.name ?? "Guest",
+      email: session?.user.email ?? "",
+    },
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: IconDashboard,
+      },
+
+      {
+        title: "My Rooms",
+        url: "/my-rooms",
+        icon: IconFolder,
+      },
+      {
+        title: "My Files",
+        url: "/files",
+        icon: IconFileDescription,
+      },
+    ],
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -85,5 +79,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

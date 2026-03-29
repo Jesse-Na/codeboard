@@ -16,10 +16,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 import { createRoom } from "@/lib/actions";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LanguageSelector } from "../languages";
+import { authClient } from "@/lib/auth-client";
 
 interface RoomCreationProps {
   open: boolean;
@@ -29,15 +29,14 @@ interface RoomCreationProps {
 export function RoomCreation({ open, onClose }: RoomCreationProps) {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
-  const { profile } = useAuthContext();
+
   const [language, setLanguage] = useState("js");
+  const { data: session } = authClient.useSession();
 
   const handleCreate = async (formData: FormData) => {
-    if (!profile?.id) {
+    if (!session) {
       return setMessage("You must be logged in");
     }
-
-    // const id = "test-user-id";
 
     const name = formData.get("name") as string;
     const desc = formData.get("desc") as string;
@@ -48,8 +47,7 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
 
     try {
       const roomId = await createRoom({
-        ownerId: profile.id,
-        // ownerId: id,
+        ownerId: session.user.id,
         name,
         desc,
         language,
@@ -110,9 +108,13 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" className="cursor-pointer">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit" className="cursor-pointer">Create Room</Button>
+            <Button type="submit" className="cursor-pointer">
+              Create Room
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

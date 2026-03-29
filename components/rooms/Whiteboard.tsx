@@ -8,11 +8,6 @@ import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
 
-type BoardProps = {
-  height?: number;
-  width?: number;
-};
-
 export enum Tool {
   POINTER = "pointer",
   PENCIL = "pencil",
@@ -20,7 +15,7 @@ export enum Tool {
 }
 // export type PencilColour = "black" | "red" | "blue" | "green";
 
-export default function Board({ width = 600, height = 400 }: BoardProps) {
+export default function Board() {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.POINTER);
   const [pencilColour, setPencilColour] = useState<string>("black");
   const [lineWidth, setLineWidth] = useState([2]);

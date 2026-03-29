@@ -17,23 +17,6 @@ export async function createRoom({
   desc,
   language,
 }: createRoomProps): Promise<number> {
-  // check if user exists
-  if (ownerId === "test-user-id") {
-    console.warn(
-      "Using test user ID. In production, ensure that the user is authenticated and the ID is valid.",
-    );
-    await prisma.user.upsert({
-      where: { id: ownerId },
-      update: {},
-      create: {
-        id: ownerId,
-        name: "Test User",
-        email: "test@example.com",
-        password: "hashedpassword",
-      },
-    });
-  }
-
   const user = await prisma.user.findUnique({
     where: {
       id: ownerId,
