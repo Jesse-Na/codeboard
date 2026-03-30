@@ -220,7 +220,6 @@ export default function Board() {
         style={{
           backgroundColor: "transparent",
           left: 0,
-          top: 150,
           position: "absolute",
           pointerEvents: activeTool === Tool.POINTER ? "none" : "auto",
         }}

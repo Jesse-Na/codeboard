@@ -38,6 +38,7 @@ export function WhiteboardTools({
 }: WhiteboardToolsProps) {
   return (
     <header
+      id="whiteboard-tools"
       style={{ backgroundColor: "rgb(226, 232, 240)" }}
       className="sticky top-0 items-center py-4 z-50"
     >
