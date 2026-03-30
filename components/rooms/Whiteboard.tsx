@@ -7,6 +7,7 @@ import io, { Socket } from "socket.io-client";
 import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
+import html2canvas from "html2canvas-pro";
 
 export enum Tool {
   POINTER = "pointer",
@@ -177,25 +178,47 @@ export default function Board() {
   }, [canvasRef, socket, roomId, pencilColour, activeTool, lineWidth]);
 
   const handleSave = () => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          const file = new File([blob], "board.png", {
-            type: "image/png",
-          });
-          try {
-            saveBoard(Number(roomId), file);
-            alert("Board saved successfully!");
-          } catch (error) {
-            alert("Error saving board: " + error);
+    const capture = document.getElementById("capture") as HTMLElement;
+    if (!capture) return;
+
+    html2canvas(capture).then((canvas: HTMLCanvasElement) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const file = new File([blob], "board.png", {
+              type: "image/png",
+            });
+            try {
+              saveBoard(Number(roomId), file);
+              alert("Board saved successfully!");
+            } catch (error) {
+              alert("Error saving board: " + error);
+            }
           }
-        }
-      },
-      "image/png",
-      1,
-    );
+        },
+        "image/png",
+        1,
+      );
+    });
+    // if (!canvasRef.current) return;
+    // const canvas = canvasRef.current;
+    // canvas.toBlob(
+    //   (blob) => {
+    //     if (blob) {
+    //       const file = new File([blob], "board.png", {
+    //         type: "image/png",
+    //       });
+    //       try {
+    //         saveBoard(Number(roomId), file);
+    //         alert("Board saved successfully!");
+    //       } catch (error) {
+    //         alert("Error saving board: " + error);
+    //       }
+    //     }
+    //   },
+    //   "image/png",
+    //   1,
+    // );
   };
 
   return (
