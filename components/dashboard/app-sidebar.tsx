@@ -25,6 +25,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import localFont from 'next/font/local'
+
+const sevenSegment = localFont({src: '../../assets/fonts/SevenSegment.ttf'})
+const zeyada = localFont({src: '../../assets/fonts/Zeyada-Regular.ttf',})
+
 
 const data = {
   user: {
@@ -71,7 +76,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <Link href="/">
-                <span className="text-base font-bold">CodeBoard</span>
+                <span className="text-3xl flex items-baseline font-bold">
+                  <p className={sevenSegment.className}>CODE</p>
+                  <p className={zeyada.className}>BOARD</p>
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
