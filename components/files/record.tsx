@@ -62,7 +62,7 @@ export default function RecordsTable() {
           <TableHead>Room</TableHead>
           <TableHead>Code File</TableHead>
           <TableHead>Image File</TableHead>
-          <TableHead>Last Updated</TableHead>
+          <TableHead className="text-right">Last Updated</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -81,6 +81,7 @@ export default function RecordsTable() {
                   onClick={() =>
                     handleCodeDownload(record.code!, record.codeFile!)
                   }
+                  className="cursor-pointer"
                 >
                   Download
                 </Button>
@@ -94,6 +95,7 @@ export default function RecordsTable() {
                   onClick={() =>
                     handleBoardDownload(record.board!, record.boardFile!)
                   }
+                  className="cursor-pointer"
                 >
                   Download
                 </Button>
