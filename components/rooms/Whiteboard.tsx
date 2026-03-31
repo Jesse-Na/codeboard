@@ -7,11 +7,7 @@ import io, { Socket } from "socket.io-client";
 import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
-
-type BoardProps = {
-  height?: number;
-  width?: number;
-};
+import html2canvas from "html2canvas-pro";
 
 export enum Tool {
   POINTER = "pointer",
@@ -20,7 +16,7 @@ export enum Tool {
 }
 // export type PencilColour = "black" | "red" | "blue" | "green";
 
-export default function Board({ width = 600, height = 400 }: BoardProps) {
+export default function Board() {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.POINTER);
   const [pencilColour, setPencilColour] = useState<string>("black");
   const [lineWidth, setLineWidth] = useState([2]);
@@ -182,25 +178,47 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
   }, [canvasRef, socket, roomId, pencilColour, activeTool, lineWidth]);
 
   const handleSave = () => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          const file = new File([blob], "board.png", {
-            type: "image/png",
-          });
-          try {
-            saveBoard(Number(roomId), file);
-            alert("Board saved successfully!");
-          } catch (error) {
-            alert("Error saving board: " + error);
+    const capture = document.getElementById("capture") as HTMLElement;
+    if (!capture) return;
+
+    html2canvas(capture).then((canvas: HTMLCanvasElement) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const file = new File([blob], "board.png", {
+              type: "image/png",
+            });
+            try {
+              saveBoard(Number(roomId), file);
+              alert("Board saved successfully!");
+            } catch (error) {
+              alert("Error saving board: " + error);
+            }
           }
-        }
-      },
-      "image/png",
-      1,
-    );
+        },
+        "image/png",
+        1,
+      );
+    });
+    // if (!canvasRef.current) return;
+    // const canvas = canvasRef.current;
+    // canvas.toBlob(
+    //   (blob) => {
+    //     if (blob) {
+    //       const file = new File([blob], "board.png", {
+    //         type: "image/png",
+    //       });
+    //       try {
+    //         saveBoard(Number(roomId), file);
+    //         alert("Board saved successfully!");
+    //       } catch (error) {
+    //         alert("Error saving board: " + error);
+    //       }
+    //     }
+    //   },
+    //   "image/png",
+    //   1,
+    // );
   };
 
   return (
@@ -225,7 +243,6 @@ export default function Board({ width = 600, height = 400 }: BoardProps) {
         style={{
           backgroundColor: "transparent",
           left: 0,
-          top: 150,
           position: "absolute",
           pointerEvents: activeTool === Tool.POINTER ? "none" : "auto",
         }}

@@ -1,6 +1,6 @@
 "use server";
 
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "./prisma";
 import { s3Client } from "./spaces";
 
@@ -17,23 +17,6 @@ export async function createRoom({
   desc,
   language,
 }: createRoomProps): Promise<number> {
-  // check if user exists
-  if (ownerId === "test-user-id") {
-    console.warn(
-      "Using test user ID. In production, ensure that the user is authenticated and the ID is valid.",
-    );
-    await prisma.user.upsert({
-      where: { id: ownerId },
-      update: {},
-      create: {
-        id: ownerId,
-        name: "Test User",
-        email: "test@example.com",
-        password: "hashedpassword",
-      },
-    });
-  }
-
   const user = await prisma.user.findUnique({
     where: {
       id: ownerId,
@@ -153,33 +136,71 @@ export async function saveBoard(roomId: number, board: File) {
   }
 }
 
-export async function getFiles(roomId: number) {
-  const room = await prisma.room.findUnique({
-    where: {
-      id: roomId,
-    },
-  });
+export type S3Record = {
+  code: Uint8Array<ArrayBufferLike> | null;
+  board: Uint8Array<ArrayBufferLike> | null;
+  room: {
+    name: string;
+  };
+  id: number;
+  codeFile: string | null;
+  boardFile: string | null;
+  lastUpdated: Date;
+  roomId: number;
+};
 
-  if (!room) {
-    throw new Error("Room not found");
-  }
-
+export async function getAllFiles(ownerId: string) {
   const records = await prisma.record.findMany({
     where: {
-      roomId: room.id,
+      room: { ownerId },
+    },
+    include: {
+      room: { select: { name: true } },
     },
     orderBy: {
       lastUpdated: "desc",
     },
   });
 
-  if (records.length === 0) {
-    throw new Error("No records found for room");
-  }
+  const codeFiles = await Promise.all(
+    records.map(async (record) => {
+      if (record.codeFile) {
+        const code = await s3Client.send(
+          new GetObjectCommand({
+            Bucket: process.env.SPACES_BUCKET!,
+            Key: record.codeFile,
+          }),
+        );
 
-  const codeFile = records.find((record) => record.codeFile)?.codeFile || null;
-  const boardFile =
-    records.find((record) => record.boardFile)?.boardFile || null;
+        const body = await code.Body?.transformToByteArray();
 
-  return { codeFile, boardFile };
+        return { code: body ?? null };
+      }
+      return { code: null };
+    }),
+  );
+
+  const boardFiles = await Promise.all(
+    records.map(async (record) => {
+      if (record.boardFile) {
+        const board = await s3Client.send(
+          new GetObjectCommand({
+            Bucket: process.env.SPACES_BUCKET!,
+            Key: record.boardFile,
+          }),
+        );
+
+        const body = await board.Body?.transformToByteArray();
+
+        return { board: body ?? null };
+      }
+      return { board: null };
+    }),
+  );
+
+  return records.map((record, index) => ({
+    ...record,
+    code: codeFiles[index].code,
+    board: boardFiles[index].board,
+  }));
 }

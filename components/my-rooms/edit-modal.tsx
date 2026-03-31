@@ -15,25 +15,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-import { createRoom } from "@/lib/actions";
+import { updateRoom } from "@/lib/actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LanguageSelector } from "../languages";
 import { authClient } from "@/lib/auth-client";
+import { Room, User } from "@/generated/prisma/client";
 
-interface RoomCreationProps {
+type RoomWithOwner = Room & { owner: User };
+
+interface RoomEditProps {
   open: boolean;
+  room: RoomWithOwner;
   onClose: () => void;
 }
 
-export function RoomCreation({ open, onClose }: RoomCreationProps) {
+export function RoomEditModal({ open, room, onClose }: RoomEditProps) {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const [language, setLanguage] = useState("js");
   const { data: session } = authClient.useSession();
 
-  const handleCreate = async (formData: FormData) => {
+  const handleEdit = async (formData: FormData) => {
     if (!session) {
       return setMessage("You must be logged in");
     }
@@ -46,20 +50,15 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
     }
 
     try {
-      const roomId = await createRoom({
-        ownerId: session.user.id,
-        name,
-        desc,
-        language,
-      });
+      await updateRoom(room.id, name, room.isActive, desc);
 
       onClose();
       setTimeout(() => {
-        router.push(`/rooms/${roomId}`);
+        router.push(`/rooms/${room.id}`);
       }, 1000);
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Error creating room",
+        error instanceof Error ? error.message : "Error editing room",
       );
     }
   };
@@ -67,11 +66,11 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="sm:max-w-sm">
-        <form action={handleCreate}>
+        <form action={handleEdit}>
           <DialogHeader>
-            <DialogTitle>Create a Room</DialogTitle>
+            <DialogTitle>Edit Room</DialogTitle>
             <DialogDescription>
-              Enter the details for your workspace below.
+              Update the details for your room below.
             </DialogDescription>
           </DialogHeader>
 
@@ -111,7 +110,7 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
               </Button>
             </DialogClose>
             <Button type="submit" className="cursor-pointer">
-              Create Room
+              Edit Room
             </Button>
           </DialogFooter>
         </form>

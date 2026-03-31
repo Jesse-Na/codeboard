@@ -16,9 +16,12 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Room } from "@/generated/prisma/client";
 import { RoomCreation } from "./room-creation";
+import { User } from "@/generated/prisma/client";
+
+type RoomWithOwner = Room & { owner: User };
 
 export function RoomCards() {
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<RoomWithOwner[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -44,10 +47,13 @@ export function RoomCards() {
     <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       {/* Rooms */}
       {rooms.map((room) => (
-        <Card key={room.id} className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]">
+        <Card
+          key={room.id}
+          className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]"
+        >
           <CardHeader>
             <CardTitle className="text-xl font-semibold">{room.name}</CardTitle>
-            <CardDescription>Created By: {room.ownerId}</CardDescription>
+            <CardDescription>Created By: {room.owner.name}</CardDescription>
           </CardHeader>
 
           <CardContent className="flex-1">
@@ -64,7 +70,6 @@ export function RoomCards() {
 
       {/* Create Room Card */}
       <Card className="@container/card justify-center items-center hover:bg-primary/5 transition-colors min-h-[160px] bg-gradient-to-t from-primary/5 to-card">
-     
         <Button
           variant="ghost"
           className="flex flex-col gap-2 h-full w-full cursor-pointer hover:bg-transparent"

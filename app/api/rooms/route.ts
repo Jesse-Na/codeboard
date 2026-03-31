@@ -1,20 +1,31 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-export async function GET() {
-	const rooms = await prisma.room.findMany({
-		include: {
-			records: {
-				orderBy: {
-					lastUpdated: "desc",
-				},
-			},
-		},
-		orderBy: {
-			id: "asc",
-		},
-	});
+export async function GET(request: Request) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-	console.log("Rooms fetched from database:", rooms);
-	return NextResponse.json(rooms);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const params = new URL(request.url).searchParams;
+  const userId = params.get("userId");
+
+  const rooms = await prisma.room.findMany({
+    where: {
+      ownerId: userId ?? undefined,
+    },
+    include: {
+      owner: true,
+    },
+    orderBy: {
+      id: "asc",
+    },
+  });
+
+  return NextResponse.json(rooms);
 }
