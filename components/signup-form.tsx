@@ -63,7 +63,7 @@ export function SignupForm({
           <form action={handleSignUp}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                <FieldLabel htmlFor="name">Name</FieldLabel>
                 <Input
                   id="name"
                   name="name"
