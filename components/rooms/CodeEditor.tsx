@@ -95,7 +95,7 @@ export default function CodeEditor({
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit("joinRoom", roomId);
+    socket.emit("joinRoom", roomId, langSelected);
   }, [socket, roomId]);
 
   // Event listener for receiving code editor data from the socket

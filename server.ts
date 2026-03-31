@@ -29,7 +29,7 @@ app.prepare().then(() => {
 	io.on("connection", (socket) => {
 		console.log("user connected: " + socket.id);
 
-		socket.on("joinRoom", (roomId: string) => {
+		socket.on("joinRoom", (roomId: string, language: string) => {
 			console.log(`Socket ${socket.id} joined room ${roomId}`);
 			socket.join(roomId);
 
@@ -38,8 +38,12 @@ app.prepare().then(() => {
 				rooms[roomId] = {
 					canvas: new ArrayBuffer(0),
 					code: "console.log('hello world!');",
-					language: "js",
+					language: language,
 				};
+			}
+			//Set language of existing room (in case it was edited from main page)
+			else {
+				rooms[roomId].language = language;
 			}
 
 			//Emit current room state to new user

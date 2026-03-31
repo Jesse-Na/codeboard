@@ -46,7 +46,7 @@ export default async function Room({ params }: RoomParams) {
       <SidebarInset>
         <RoomHeader name={room.name} />
         <div className="min-h-screen">
-          <EditorSection />
+          <EditorSection language={room.language}/>
         </div>
       </SidebarInset>
     </SidebarProvider>

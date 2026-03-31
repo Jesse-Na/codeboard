@@ -33,25 +33,26 @@ interface RoomEditProps {
     name: string,
     isActive: boolean,
     desc: string | null,
+    language: string,
   ) => void;
 }
 
 export function RoomEditModal({ open, room, onClose, onEdit }: RoomEditProps) {
   const [message, setMessage] = useState<string | null>(null);
 
-  const [language, setLanguage] = useState("js");
+  const [name, setName] = useState(room.name);
+  const [desc, setDesc] = useState(room.desc ?? "");
+  const [language, setLanguage] = useState(room.language);
 
-  const handleEdit = async (formData: FormData) => {
-    const name = formData.get("name") as string;
-    const desc = formData.get("desc") as string | null;
-
+  const handleEdit = async () => {
     if (!name || name.trim() === "") {
       setMessage("Room name is required");
       return;
     }
 
     try {
-      onEdit(room.id, name, true, desc);
+      const finalDesc = desc.trim() === "" ? null : desc;
+      onEdit(room.id, name, true, finalDesc, language);
       onClose();
       setMessage(null);
     } catch (error) {
@@ -62,7 +63,12 @@ export function RoomEditModal({ open, room, onClose, onEdit }: RoomEditProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="sm:max-w-sm">
-        <form action={handleEdit}>
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEdit();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Edit Room</DialogTitle>
             <DialogDescription>
@@ -76,8 +82,10 @@ export function RoomEditModal({ open, room, onClose, onEdit }: RoomEditProps) {
               <Input
                 id="name"
                 name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Lecture 5"
-                className="text-muted-foreground"
+                className="placeholder:text-muted-foreground"
               />
             </Field>
             <Field>
@@ -85,8 +93,10 @@ export function RoomEditModal({ open, room, onClose, onEdit }: RoomEditProps) {
               <Input
                 id="desc"
                 name="desc"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
                 placeholder="e.g. Intro to Python"
-                className="text-muted-foreground"
+                className="placeholder:text-muted-foreground"
               />
             </Field>
 
