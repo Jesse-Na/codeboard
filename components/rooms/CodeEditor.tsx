@@ -28,7 +28,7 @@ import { Separator } from "../ui/separator";
 type CodeEditorProps = {
   parentId: string;
   theme?: "light" | "dark";
-  language?: string;
+  language: string;
 };
 
 const languageDropdownOptions = [
@@ -54,8 +54,9 @@ const languageExtensions: {
 export default function CodeEditor({
   parentId,
   theme = "dark",
-  language = "js",
+  language,
 }: CodeEditorProps) {
+
   const [codeValue, setCodeValue] = useState<string>("// loading...");
   const [langSelected, setLangSelected] = useState<string>(language);
   const fileInputRef = useRef<HTMLInputElement>(null);
