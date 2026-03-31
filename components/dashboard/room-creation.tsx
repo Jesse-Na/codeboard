@@ -104,8 +104,6 @@ export function RoomCreation({ open, onClose }: RoomCreationProps) {
             {message && <p className="text-sm text-red-800">{message}</p>}
           </FieldGroup>
 
-          {/* Private or Public Room - Future Implementation */}
-
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline" className="cursor-pointer">
