@@ -1,6 +1,6 @@
 "use client";
 import { deleteRoom } from "@/lib/actions";
-import { RoomDeletion } from "./room-delete";
+import { RoomEdit } from "./edit-room";
 
 import Link from "next/link";
 
@@ -58,7 +58,7 @@ export function MyRooms() {
     <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       {/* Rooms */}
       {rooms.map((room) => (
-        <RoomDeletion key={room.id} onDelete={() => handleDelete(room.id)}>
+        <RoomEdit key={room.id} room={room} onDelete={() => handleDelete(room.id)}>
           <Card className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]">
             <CardHeader>
               <CardTitle className="text-xl cursor-pointer font-semibold">
@@ -77,7 +77,7 @@ export function MyRooms() {
               </Button>
             </CardFooter>
           </Card>
-        </RoomDeletion>
+        </RoomEdit>
       ))}
 
       {/* Create Room Card */}

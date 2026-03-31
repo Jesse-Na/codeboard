@@ -5,6 +5,7 @@ import { RoomHeader } from "@/components/rooms/RoomHeader";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
 type RoomParams = {
   params: {
@@ -24,6 +25,14 @@ export default async function Room({ params }: RoomParams) {
     redirect("/login");
   }
 
+  const room = await prisma.room.findUnique({
+    where: { id: roomId }
+  });
+
+  if (!room) {
+    redirect("/dashboard");
+  }
+  
   return (
     <SidebarProvider
       style={
