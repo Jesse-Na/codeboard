@@ -1,5 +1,5 @@
 "use client";
-import { deleteRoom } from "@/lib/actions";
+import { deleteRoom, updateRoom } from "@/lib/actions";
 import { RoomEdit } from "./edit-room";
 
 import Link from "next/link";
@@ -53,12 +53,37 @@ export function MyRooms() {
     setRooms(rooms.filter((room) => room.id !== id));
   };
 
+  const handleEdit = async (
+    id: number,
+    name: string,
+    isActive: boolean,
+    desc: string | null,
+  ) => {
+    try {
+      await updateRoom(id, name, isActive, desc);
+      setRooms(
+        rooms.map((room) =>
+          room.id === id ? { ...room, name, isActive, desc } : room,
+        ),
+      );
+    } catch (error) {
+      throw new Error(
+        error instanceof Error ? error.message : "Error editing room",
+      );
+    }
+  };
+
   return (
     // Display rooms only with your id
     <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       {/* Rooms */}
       {rooms.map((room) => (
-        <RoomEdit key={room.id} room={room} onDelete={() => handleDelete(room.id)}>
+        <RoomEdit
+          key={room.id}
+          room={room}
+          onDelete={() => handleDelete(room.id)}
+          onEdit={handleEdit}
+        >
           <Card className="@container/card hover:bg-primary/5 transition-colors min-h-[160px]">
             <CardHeader>
               <CardTitle className="text-xl cursor-pointer font-semibold">

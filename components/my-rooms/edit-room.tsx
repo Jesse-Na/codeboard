@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+} from "@/components/ui/context-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,71 +16,84 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { TrashIcon } from "lucide-react"
-import { RefreshCcw } from "lucide-react"
-import { useState } from "react"
+} from "@/components/ui/alert-dialog";
+import { TrashIcon } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { useState } from "react";
 
 import { RoomEditModal } from "./edit-modal";
 import { Room, User } from "@/generated/prisma/client";
 
-type optionsRoomProp= {
-    room: RoomWithOwner;
-    onDelete: () => void;
-    onEdit?: () => void;
-    children: React.ReactNode;
-}
+type optionsRoomProp = {
+  room: RoomWithOwner;
+  onDelete: () => void;
+  onEdit: (
+    id: number,
+    name: string,
+    isActive: boolean,
+    desc: string | null,
+  ) => void;
+  children: React.ReactNode;
+};
 
 type RoomWithOwner = Room & { owner: User };
 
-export function RoomEdit({onDelete, room, children}: optionsRoomProp ) {
-   const [editOpen, setEditOpen] = useState(false);
+export function RoomEdit({
+  onDelete,
+  room,
+  children,
+  onEdit,
+}: optionsRoomProp) {
+  const [editOpen, setEditOpen] = useState(false);
 
-    return (
+  return (
     <AlertDialog>
-    <ContextMenu>
-        <ContextMenuTrigger asChild>
-            {children}
-        </ContextMenuTrigger>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
 
-      <ContextMenuContent>
-
-        {/* Edit Room */}
-        <ContextMenuItem onSelect={(e) => e.preventDefault()} onClick={
-            () => setEditOpen(true)}>
+        <ContextMenuContent>
+          {/* Edit Room */}
+          <ContextMenuItem
+            onSelect={(e) => e.preventDefault()}
+            onClick={() => setEditOpen(true)}
+          >
             <RefreshCcw className="mr-2 h-4 w-4" />
             <span>Edit Room</span>
-        </ContextMenuItem>
+          </ContextMenuItem>
 
-        <RoomEditModal open={editOpen} onClose={() => setEditOpen(false)} room={room} />
+          <RoomEditModal
+            open={editOpen}
+            onEdit={onEdit}
+            onClose={() => setEditOpen(false)}
+            room={room}
+          />
 
-        {/* Delete Room */}
-        <AlertDialogTrigger asChild>
+          {/* Delete Room */}
+          <AlertDialogTrigger asChild>
             <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-                <TrashIcon className="mr-2 h-4 w-4" />
-                    <span>Delete Room</span>
+              <TrashIcon className="mr-2 h-4 w-4" />
+              <span>Delete Room</span>
             </ContextMenuItem>
-        </AlertDialogTrigger>
-        
-        {/* Delete Room Dialog */}
-        <AlertDialogContent size="sm">
+          </AlertDialogTrigger>
+
+          {/* Delete Room Dialog */}
+          <AlertDialogContent size="sm">
             <AlertDialogHeader>
-                <AlertDialogTitle>Delete room?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This will permanently delete the room.
-                    </AlertDialogDescription>
+              <AlertDialogTitle>Delete room?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete the room.
+              </AlertDialogDescription>
             </AlertDialogHeader>
 
             <AlertDialogFooter>
-                <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} variant="destructive">Delete</AlertDialogAction>
+              <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} variant="destructive">
+                Delete
+              </AlertDialogAction>
             </AlertDialogFooter>
-        </AlertDialogContent>
-
-      </ContextMenuContent>
-
-    </ContextMenu>
+          </AlertDialogContent>
+        </ContextMenuContent>
+      </ContextMenu>
     </AlertDialog>
-
-    )
+  );
 }

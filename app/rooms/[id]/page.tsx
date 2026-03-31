@@ -26,13 +26,13 @@ export default async function Room({ params }: RoomParams) {
   }
 
   const room = await prisma.room.findUnique({
-    where: { id: roomId }
+    where: { id: roomId },
   });
 
   if (!room) {
     redirect("/dashboard");
   }
-  
+
   return (
     <SidebarProvider
       style={
@@ -44,7 +44,7 @@ export default async function Room({ params }: RoomParams) {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <RoomHeader room={roomId} name={room.name} />
+        <RoomHeader name={room.name} />
         <div className="min-h-screen">
           <EditorSection />
         </div>

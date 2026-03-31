@@ -43,7 +43,7 @@ export async function updateRoom(
   roomId: number,
   name: string,
   isActive: boolean | undefined,
-  desc: string | undefined,
+  desc: string | null,
 ) {
   await prisma.room.update({
     where: {

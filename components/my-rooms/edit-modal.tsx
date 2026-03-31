@@ -28,38 +28,34 @@ interface RoomEditProps {
   open: boolean;
   room: RoomWithOwner;
   onClose: () => void;
+  onEdit: (
+    id: number,
+    name: string,
+    isActive: boolean,
+    desc: string | null,
+  ) => void;
 }
 
-export function RoomEditModal({ open, room, onClose }: RoomEditProps) {
+export function RoomEditModal({ open, room, onClose, onEdit }: RoomEditProps) {
   const [message, setMessage] = useState<string | null>(null);
-  const router = useRouter();
 
   const [language, setLanguage] = useState("js");
-  const { data: session } = authClient.useSession();
 
   const handleEdit = async (formData: FormData) => {
-    if (!session) {
-      return setMessage("You must be logged in");
-    }
-
     const name = formData.get("name") as string;
-    const desc = formData.get("desc") as string;
+    const desc = formData.get("desc") as string | null;
 
     if (!name || name.trim() === "") {
-      return setMessage("Room name is required");
+      setMessage("Room name is required");
+      return;
     }
 
     try {
-      await updateRoom(room.id, name, room.isActive, desc);
-
+      onEdit(room.id, name, true, desc);
       onClose();
-      setTimeout(() => {
-        router.push(`/rooms/${room.id}`);
-      }, 1000);
+      setMessage(null);
     } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Error editing room",
-      );
+      setMessage(error instanceof Error ? error.message : String(error));
     }
   };
 
