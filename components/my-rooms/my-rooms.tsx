@@ -58,12 +58,13 @@ export function MyRooms() {
     name: string,
     isActive: boolean,
     desc: string | null,
+    language: string,
   ) => {
     try {
-      await updateRoom(id, name, isActive, desc);
+      await updateRoom(id, name, isActive, desc, language);
       setRooms(
         rooms.map((room) =>
-          room.id === id ? { ...room, name, isActive, desc } : room,
+          room.id === id ? { ...room, name, isActive, desc, language } : room,
         ),
       );
     } catch (error) {

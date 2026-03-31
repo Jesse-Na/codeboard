@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
+import Link from "next/link"
+
 type RoomHeaderProps = {
   name: string;
 };
@@ -22,7 +24,7 @@ export function RoomHeader({ name }: RoomHeaderProps) {
             className="hidden sm:flex"
             style={{ backgroundColor: "red" }}
           >
-            Stop Hosting
+            <Link href={'/dashboard'}>Leave Room</Link>
           </Button>
         </div>
       </div>

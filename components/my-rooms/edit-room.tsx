@@ -32,6 +32,7 @@ type optionsRoomProp = {
     name: string,
     isActive: boolean,
     desc: string | null,
+    language: string,
   ) => void;
   children: React.ReactNode;
 };

@@ -44,6 +44,7 @@ export async function updateRoom(
   name: string,
   isActive: boolean | undefined,
   desc: string | null,
+  language: string,
 ) {
   await prisma.room.update({
     where: {
@@ -53,6 +54,7 @@ export async function updateRoom(
       name,
       isActive,
       desc,
+      language,
     },
   });
 }
