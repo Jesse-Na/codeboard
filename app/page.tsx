@@ -1,23 +1,31 @@
 "use client";
 
 import { RowNav } from "@/components/landing/RowNav";
-import Image from "next/image";
-import title from "@/app/title.png";
 import { Header } from "@/components/landing/Header";
+import localFont from "next/font/local";
 
+const sevenSegment = localFont({src: '../assets/fonts/SevenSegment.ttf'})
+const zeyada = localFont({src: '../assets/fonts/Zeyada-Regular.ttf',})
 export default function Page() {
   return (
-    <div>
-      <div className="lg:flex">
-        <Header></Header>
-      </div>
-      <div className="flex flex-col py-32">
-        <div className="flex w-full justify-center items-center">
-          <Image src={title} alt="CodeBoard" />
+    <div className="w-full" style={{
+        backgroundImage: 'repeating-linear-gradient(#ccc 0 2px, transparent 1px 80px), repeating-linear-gradient(90deg, #ccc 0 2px, transparent 1px 80px)', 
+        objectFit:"fill"
+      }}>
+      <div className="flex flex-col min-h-screen">
+        <div className="lg:flex">
+          <Header></Header>
+        </div> 
+
+        <div className="text-[12rem] pt-32 flex items-baseline justify-center">
+          <p className={sevenSegment.className}>CODE</p>
+          <p className={zeyada.className}>BOARD</p>
         </div>
+
         <div>
           <RowNav />
         </div>
+
       </div>
     </div>
   );
