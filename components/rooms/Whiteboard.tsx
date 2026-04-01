@@ -60,7 +60,6 @@ export default function Board() {
     });
 
     socket.on("clearCanvas", () => {
-      console.log("clearCanvas event received");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
 
@@ -121,7 +120,6 @@ export default function Board() {
     const sendCanvasData = () => {
       if (activeTool === Tool.POINTER) return;
 
-      console.log("sending canvas data");
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -159,7 +157,6 @@ export default function Board() {
     // window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      console.log("unmounting whiteboard");
       // Clean up event listeners when component unmounts
       canvas.removeEventListener("mousedown", startDrawing);
       canvas.removeEventListener("mousemove", draw);

@@ -54,7 +54,6 @@ app.prepare().then(() => {
 
     socket.on("canvasImage", (data: ArrayBuffer, roomId: string) => {
       console.log("Received canvas image from client: " + socket.id);
-      console.log(data);
       if (!rooms[roomId]) return;
       rooms[roomId].canvas = data;
       socket.to(roomId).emit("canvasImage", data);
