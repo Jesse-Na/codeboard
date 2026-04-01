@@ -75,62 +75,65 @@ The files page consists of a table with the following columns:
 
 ### Feature: Landing Page and Dashboard (Catherine)
 
-![image](https://hackmd.io/_uploads/SJoui9tsbx.png)
-
 #### Landing Page
 On the landing page, users can do the following:
 - Click **Sign Up** to log into the dashboard
 - Click **Dashboard** to enter the main page
 - Click **Join a Room** to directly join a workspace
 
+<img width="1915" height="598" alt="image" src="https://github.com/user-attachments/assets/f4cc6eae-799a-42e1-89d4-0dfab6c35e4f" />
+
 Unauthenticated users that attempt to enter the dashboard are directed to the sign in or sign up page where they can login or create an account using their emails. 
 
 #### Dashboard
-The dashboard consists of current rooms displayed in the form of cards. Each card details the name of the room, creator, and an optional description.
-
-The left-side of the page contains a collapsable navigation bar with the following tabs:
+The main page contains a collapsable navigation bar with the following tabs:
 - Dashboard
-- My Workspace
+- My Rooms
 - My Files
 
-The *My Workspace* page only displays the rooms created by the user. The *My Files* page lists any saved files from the room sessions. At the bottom of the navigation bar, users can choose to log out from their accounts.
+The dashboard page consists of current rooms displayed in the form of cards. Each card details the name of the room, creator, and an optional description. The *My Rooms* page only displays the rooms created by the user. The *My Files* page lists any saved files from the room sessions. At the bottom of the navigation bar, users can choose to log out from their accounts.
+
+<img width="1887" height="1071" alt="image" src="https://github.com/user-attachments/assets/bc92c249-d1da-460f-9d1f-882a70f01632" />
 
 ### Feature: User Accounts
 Users can create an account or sign in using their emails. During signup, users are also prompted to enter a display name.
 
 |Sign In|Sign Up|
 |----------|:-------------:|
-|<img width="553" height="679" alt="image" src="https://github.com/user-attachments/assets/cf52a801-0552-4fb0-ada2-0184b7f211b0" />|<img width="557" height="632" alt="image" src="https://github.com/user-attachments/assets/be87bcab-648c-43e6-a628-0e00531bd333" />|
+|<img width="553" height="679" alt="image" src="https://github.com/user-attachments/assets/22b47a5e-d00e-471c-9ac8-0958c3c0f55c" />|<img width="557" height="632" alt="image" src="https://github.com/user-attachments/assets/ae53b4a2-b914-4b4e-b84f-958bb01e804c" />|
 
 ### Feature: Rooms
 To create a room, click the **Create New Room** button on the dashboard or in the top-right header. Enter a name for the room, and select a programming language. A description is optional. Press **Create Room** to be redirected to your new room.
 
-The room page consists of a code editor, a whiteboard and a toolbar associated with each feature.
+<img width="371" height="373" alt="image" src="https://github.com/user-attachments/assets/73ebf9e4-d61b-455e-8380-fdb3e019d007" />
 
-<img width="1920" height="1084" alt="image" src="https://github.com/user-attachments/assets/332c0e8c-7973-4c7e-ace7-d4a5155085e1" />
+To delete or edit the name, language, or description of the room, navigate to *My Workspace* and right-click on the room card. A menu will appear with the options to edit or permanently delete the room.
 
+<img width="486" height="235" alt="image" src="https://github.com/user-attachments/assets/8e32e7c1-20d6-4dec-8a7d-0f2b70f76a35" />
+
+The room page consists of a code editor, a whiteboard and a toolbar associated with each feature. The "Leave Room" button on the upper right corner redirects the user back to the Dashboard page.
+
+<img width="1623" height="669" alt="image" src="https://github.com/user-attachments/assets/78759cac-2f4f-4322-8291-5b27e3c5d94a" />
 
 #### Code Editor
 Using the toolbar, users can switch programming languages to change syntax, or increase text size.
 
 Users can upload an existing code file from their computer using the **Upload Code** button, or write code directly in the editor. To save the edited code file locally, press **Download Code**. Click the **Save** icon to save the file in the application.
-
-![image](https://hackmd.io/_uploads/HJGVK1ojWg.png)
+ 
+<img width="805" height="744" alt="image" src="https://github.com/user-attachments/assets/e313fa31-4e7f-4c56-a07b-4494b94920dd" />
 
 #### Whiteboard
 Using the toolbar, users can adjust the line width or colour. To draw, select the pencil icon under the tools section, or erase by selecting the eraser icon. To delete all drawings, click the trash icon. The hand tool allows the user to select text.
 
 To save the image in the application, click the **Save** icon.
 
-![image](https://hackmd.io/_uploads/Sk8PtJso-x.png)
-
-To delete or edit the name, language, or description of the room, navigate to *My Workspace* and right-click on the room card. A menu will appear with the options to edit or permanently delete the room.
+<img width="798" height="345" alt="image" src="https://github.com/user-attachments/assets/3d765988-7507-4ade-a7ab-0135625e922d" />
 
 ### Feature: Files
 Drawings and code saved from each room session are accessible in the *My Files* page.
 Press the **Download** button to download the file onto your computer.
 
-[Screenshot of example files?]
+<img width="1623" height="275" alt="image" src="https://github.com/user-attachments/assets/87fe88b0-247c-44f2-8b68-4ad9862b1c8c" />
 
 ## Development Guide (Jess)
 
@@ -218,8 +221,6 @@ Do not repeat full AI prompts or responses here. Instead, reference your ai-sess
 
 ### Taniya
 
-
-
 ## Lessons Learned and Concluding Remarks
 Our goal of creating a workspace to aid in the simultaneous presentation of code and ideas was overall successfull. Users are able to use both the code editor and whiteboard in rooms that can be created and joined by other users. 
 
@@ -229,7 +230,6 @@ Our goal of creating a workspace to aid in the simultaneous presentation of code
                 - Better Auth was great for user authentication
                 - Time constraints
                 - 
-
 ### Local Development and Testing
 For first-time set up or whenever you make a change to `schema.prisma`, run the following:
 
