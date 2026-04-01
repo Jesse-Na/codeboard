@@ -39,19 +39,17 @@ A room is a space users can connect and interact with a live code editor and whi
 
 Room creation starts with a *shadcn/ui* dialog popup containing a form for room details. Once submitted, a Next.js server action is invoked to create a record of the room in the database, the user is then redirected to a room and a socket connection is established with the backend for both the code editor and whiteboard. The backend contains an array of all live rooms and its purpose is to receive messages from clients and broadcast those messages to other users in the respective room.
 
-#### Code Editor
-talk about:
-- code editor features
-- typescript usage
-- code upload/download/save
-    - digitalocean spaces
-    - database
-    - actions
-
 #### Whiteboard
 The whiteboard is one of our core features and features a live update canvas that users can draw on using a pen that can change colour and stroke size, and erase or clear. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. div, canvas) and *shadcn/ui* components (e.g. Slider, Input, Button) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from Whiteboard to WhiteboardTools, for restricting the possible Tool options, and when interacting with socket channels.
 
-The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a Next.js server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our bucket storage with a `.png` representation of the whiteboard. We make another database call to save the storage key for easy access when retrieving files.
+The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a Next.js server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our *DigitalOcean* bucket storage with a `.png` representation of the whiteboard. We make another database call to save the storage key for easy access when retrieving files.
+
+#### Code Editor
+The other main feature of our application is the live updating code editor, which is implemented with the *CodeMirror* component. The code editor component uses built in extensions to highlight the syntax associated with the selected language for ease of understanding.
+
+The code editor also has an associated toolbar to aid a user with some useful features. The toolbar takes a set of typesafe props passed from the code editor (i.e. fileInputRef: RefObject<HTMLInputElement | null>) to keep the code editor in sync with the toolbar. The toolbar consists of several *shadcn/ui* components including *Select* for the language selection, *Input* for text size updates, and *Buttons* for text size updates, upload, download and save.
+
+The code editor can be saved by calling a created *Next.js action*. Similar to the whiteboard action, the action confirms that a room exists in the database before making a new `PutObjectCommand` to our *DigitalOcean* bucket. Then one final call is made to the database to save the storage key.
 
 ### Files
 talk about:
