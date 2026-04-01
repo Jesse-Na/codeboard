@@ -189,7 +189,7 @@ Start the development server for testing `npm run dev`.
 Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Deployment Information
->Provide the live URL of your application and relevant deployment platform details.
+Our project does not have a live deployment.
 
 
 ## AI Assistance & Verification
