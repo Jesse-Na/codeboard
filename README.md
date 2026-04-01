@@ -15,7 +15,7 @@ These clumsy setups result in significant additional lecture prep time, material
 ## Objectives
 Our goal was to create a workspace that would aid in the presentation of code and ideas simultaneously. We built an application that allows users to create and host rooms that other users can join. Each room features a real-time code editor and a whiteboard, allowing educators to both write code and draw visual aids on the side. We wanted to make the experience as smooth and lightweight as possible, so that users could spin up a room and get to teaching on a platform that just works.
 
-## Technical Stack (Catherine)
+## Technical Stack
 >Describe the technologies used, including the chosen approach (Next.js Full-Stack or Express.js Backend), database solution, and other key technologies.
 
 CodeBoard is a *Next.js* full-stack web application that uses *Typescript* for both the frontend and backend code for type safety. UI elements for the frontend is implemented using both *Next.js* and *React*, and styled with *Tailwind CSS*. *shadcn/ui* is also used to ensure a clean, modern look of the application.
