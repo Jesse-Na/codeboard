@@ -52,6 +52,7 @@ export function WhiteboardTools({
             <ButtonGroup>
               <Button
                 size="sm"
+                className="cursor-pointer"
                 variant={activeTool === Tool.POINTER ? "secondary" : "outline"}
                 onClick={() => setActiveTool(Tool.POINTER)}
               >
@@ -59,6 +60,7 @@ export function WhiteboardTools({
               </Button>
               <Button
                 size="sm"
+                className="cursor-pointer"
                 variant={activeTool === Tool.PENCIL ? "secondary" : "outline"}
                 onClick={() => setActiveTool(Tool.PENCIL)}
               >
@@ -66,15 +68,16 @@ export function WhiteboardTools({
               </Button>
               <Button
                 size="sm"
+                className="cursor-pointer"
                 variant={activeTool === Tool.ERASER ? "secondary" : "outline"}
                 onClick={() => setActiveTool(Tool.ERASER)}
               >
                 <IconEraser />
               </Button>
-              <Button size="sm" variant="outline" onClick={clear}>
+              <Button className="cursor-pointer" size="sm" variant="outline" onClick={clear}>
                 <IconTrash />
               </Button>
-              {/*<Button size="sm" variant="outline" onClick={handleSave}>
+              {/*<Button className="cursor-pointer" size="sm" variant="outline" onClick={handleSave}>
                 <IconDeviceFloppy />
               </Button>*/}
             </ButtonGroup>
@@ -88,6 +91,7 @@ export function WhiteboardTools({
           <Input
             type="color"
             onChange={(e) => setPencilColour(e.target.value)}
+            className="cursor-pointer"
           ></Input>
         </div>
 
@@ -101,14 +105,14 @@ export function WhiteboardTools({
               max={30}
               min={2}
               step={1}
-              className="mx-auto w-full max-w-xs"
+              className="mx-auto w-full max-w-xs cursor-pointer"
               onValueChange={(e) => setLinewidth(e)}
               style={{ color: "red" }}
             />
           </div>
         </div>
         <div className="gap-3">
-          <Button size="lg" onClick={save}>
+          <Button className="cursor-pointer" size="lg" onClick={save}>
             Save
             <IconDeviceFloppy />
           </Button>

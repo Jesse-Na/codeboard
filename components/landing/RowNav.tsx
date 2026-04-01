@@ -35,7 +35,7 @@ export function RowNav() {
                 <span>Dashboard</span>
                 </Link>
             </Button>
-            <Button  size={'lg'} key={"JoinRoom"} onClick={() => setModalJoinOpen(true)}>
+            <Button  className="cursor-pointer" size={'lg'} key={"JoinRoom"} onClick={() => setModalJoinOpen(true)}>
                 <span>Join a Room</span>
             </Button>
             <JoinRoom open={modalJoinOpen} rooms={rooms} onClose={() => setModalJoinOpen(false)} />

@@ -73,7 +73,7 @@ export function CodeEditorTools({
             <Label htmlFor="select-language">Language</Label>
           </div>
           <Select value={selected} onValueChange={languageUpdate}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -96,11 +96,11 @@ export function CodeEditorTools({
             aria-label="Media controls"
             className="h-fit"
           >
-            <Button variant="outline" size="icon" onClick={decreaseSize}>
+            <Button className="cursor-pointer" variant="outline" size="icon" onClick={decreaseSize}>
               <IconMinus />
             </Button>
             <Input type="numeric" value={size} onChange={updateSize}></Input>
-            <Button variant="outline" size="icon" onClick={increaseSize}>
+            <Button className="cursor-pointer" variant="outline" size="icon" onClick={increaseSize}>
               <IconPlus />
             </Button>
           </ButtonGroup>
@@ -109,18 +109,18 @@ export function CodeEditorTools({
           <div className="mx-auto max-w-xs gap-3 flex row">
             {/* Upload button */}
             <Button
-              className="h-9"
+              className="h-9 cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
             >
               Upload Code
             </Button>
 
             {/* Download button */}
-            <Button className="h-9" onClick={handleDownload}>
+            <Button className="h-9 cursor-pointer" onClick={handleDownload}>
               Download Code
             </Button>
 
-            <Button className="h-9" onClick={handleSave}>
+            <Button className="h-9 cursor-pointer" onClick={handleSave}>
               <IconDeviceFloppy />
             </Button>
           </div>
