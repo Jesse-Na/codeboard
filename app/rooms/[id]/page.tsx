@@ -44,9 +44,9 @@ export default async function Room({ params }: RoomParams) {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <RoomHeader name={room.name} />
+        <RoomHeader id={room.id} name={room.name} />
         <div className="min-h-screen">
-          <EditorSection language={room.language}/>
+          <EditorSection lang={room.language} roomId={roomId} />
         </div>
       </SidebarInset>
     </SidebarProvider>

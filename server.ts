@@ -10,84 +10,84 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
 type RoomState = {
-	canvas: ArrayBuffer;
-	code: string;
-	language: string;
+  canvas: ArrayBuffer;
+  code: string;
+  language: string;
 };
 
 app.prepare().then(() => {
-	const httpServer = createServer(handler);
+  const httpServer = createServer(handler);
 
-	const io = new Server(httpServer, {
-		cors: {
-			origin: "http://localhost:3000",
-		},
-	});
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:3000",
+    },
+  });
 
-	const rooms: Record<string, RoomState> = {};
+  const rooms: Record<string, RoomState> = {};
 
-	io.on("connection", (socket) => {
-		console.log("user connected: " + socket.id);
+  io.on("connection", (socket) => {
+    console.log("user connected: " + socket.id);
 
-		socket.on("joinRoom", (roomId: string, language: string) => {
-			console.log(`Socket ${socket.id} joined room ${roomId}`);
-			socket.join(roomId);
+    socket.on("joinRoom", (roomId: string, language: string) => {
+      console.log(`Socket ${socket.id} joined room ${roomId}`);
+      socket.join(roomId);
 
-			//Initialize new room
-			if (!rooms[roomId]) {
-				rooms[roomId] = {
-					canvas: new ArrayBuffer(0),
-					code: "console.log('hello world!');",
-					language: language,
-				};
-			}
-			//Set language of existing room (in case it was edited from main page)
-			else {
-				rooms[roomId].language = language;
-			}
+      //Initialize new room
+      if (!rooms[roomId]) {
+        rooms[roomId] = {
+          canvas: new ArrayBuffer(0),
+          code: "console.log('hello world!');",
+          language: language,
+        };
+      }
+      //Set language of existing room (in case it was edited from main page)
+      else {
+        rooms[roomId].language = language;
+      }
 
-			//Emit current room state to new user
-			socket.emit("canvasImage", rooms[roomId].canvas);
-			socket.emit("codeString", rooms[roomId].code);
-			socket.emit("languageChange", rooms[roomId].language)
-		});
+      //Emit current room state to new user
+      socket.emit("canvasImage", rooms[roomId].canvas);
+      socket.emit("codeString", rooms[roomId].code);
+      socket.emit("languageChange", rooms[roomId].language);
+    });
 
-		socket.on("canvasImage", (data: ArrayBuffer, roomId: string) => {
-			console.log("Received canvas image from client: " + socket.id);
-			if (!rooms[roomId]) return;
-			rooms[roomId].canvas = data;
-			socket.to(roomId).emit("canvasImage", data);
-		});
+    socket.on("canvasImage", (data: ArrayBuffer, roomId: string) => {
+      console.log("Received canvas image from client: " + socket.id);
+      console.log(data);
+      if (!rooms[roomId]) return;
+      rooms[roomId].canvas = data;
+      socket.to(roomId).emit("canvasImage", data);
+    });
 
-		socket.on("clearCanvas", (roomId: string) => {
-			console.log(
-				"Received clear canvas event from client: " + socket.id,
-			);
-			if (!rooms[roomId]) return;
-			socket.to(roomId).emit("clearCanvas");
-		});
+    socket.on("clearCanvas", (roomId: string) => {
+      console.log("Received clear canvas event from client: " + socket.id);
+      if (!rooms[roomId]) return;
+      rooms[roomId].canvas = new ArrayBuffer(0);
+      socket.to(roomId).emit("clearCanvas");
+    });
 
-		socket.on("codeString", (data: string, roomId: string) => {
-			console.log("Received code string from client: " + socket.id);
-			if (!rooms[roomId]) return;
-			rooms[roomId].code = data;
-			socket.to(roomId).emit("codeString", data);
-		});
+    socket.on("codeString", (data: string, roomId: string) => {
+      console.log("Received code string from client: " + socket.id);
+      if (!rooms[roomId]) return;
+      rooms[roomId].code = data;
+      socket.to(roomId).emit("codeString", data);
+    });
 
-		socket.on("languageChange", (data: string, roomId: string) => {
-			console.log("Received language from client: " + socket.id);
-			if (!rooms[roomId]) return;
-			rooms[roomId].language = data;
-			socket.to(roomId).emit("languageChange", data);
-		});
-	});
+    socket.on("languageChange", (data: string, roomId: string) => {
+      console.log("Received language from client: " + socket.id);
+      if (!rooms[roomId]) return;
+      rooms[roomId].language = data;
+      socket.to(roomId).emit("languageChange", data);
+    });
+  });
 
-	httpServer
-		.once("error", (err) => {
-			console.error(err);
-			process.exit(1);
-		})
-		.listen(port, () => {
-			console.log(`> Ready on http://${hostname}:${port}`);
-		});
+  httpServer
+    .once("error", (err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .listen(port, () => {
+      console.log(`> Ready on http://${hostname}:${port}`);
+    });
 });

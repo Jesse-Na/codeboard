@@ -14,7 +14,6 @@ import { Tool } from "@/components/rooms/Whiteboard";
 import { ButtonGroup } from "../ui/button-group";
 
 type WhiteboardToolsProps = {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
   clear: () => void;
   // pencil: () => void;
   save: () => void;
@@ -74,7 +73,12 @@ export function WhiteboardTools({
               >
                 <IconEraser />
               </Button>
-              <Button className="cursor-pointer" size="sm" variant="outline" onClick={clear}>
+              <Button
+                className="cursor-pointer"
+                size="sm"
+                variant="outline"
+                onClick={clear}
+              >
                 <IconTrash />
               </Button>
               {/*<Button className="cursor-pointer" size="sm" variant="outline" onClick={handleSave}>

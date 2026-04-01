@@ -23,12 +23,12 @@ import { Button } from "@/components/ui/button";
 import { saveCode } from "@/lib/actions";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { CodeEditorTools } from "./CodeEditorTools";
-import { Separator } from "../ui/separator";
+import { socket } from "@/lib/socket-client";
 
 type CodeEditorProps = {
   parentId: string;
   theme?: "light" | "dark";
-  language?: string;
+  language: string;
 };
 
 const languageDropdownOptions = [
@@ -65,11 +65,6 @@ export default function CodeEditor({
   const params = useParams();
   const roomId = params.id as string;
 
-  const [socket, setSocket] = useState<Socket<
-    DefaultEventsMap,
-    DefaultEventsMap
-  > | null>(null);
-
   const updateWidth = () => {
     setWidth(parent?.clientWidth || width);
   };
@@ -80,28 +75,8 @@ export default function CodeEditor({
     if (parent) new ResizeObserver(updateWidth).observe(parent);
   }, [parent]);
 
-  useEffect(() => {
-    const newSocket = io(
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
-    );
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.close();
-    };
-  }, []);
-
-  //Join correct room once socket connects
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.emit("joinRoom", roomId, langSelected);
-  }, [socket, roomId]);
-
   // Event listener for receiving code editor data from the socket
   useEffect(() => {
-    if (!socket) return;
-
     const codeHandler = (data: string) => {
       setCodeValue(data);
     };
@@ -117,7 +92,7 @@ export default function CodeEditor({
       socket.off("codeString", codeHandler);
       socket.off("languageChange", langHandler);
     };
-  }, [socket]);
+  }, []);
 
   //When code editor is updated
   const handleChange = (value: string) => {

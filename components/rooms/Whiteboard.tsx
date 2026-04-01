@@ -8,6 +8,7 @@ import { WhiteboardTools } from "./WhiteboardTools";
 import { Separator } from "../ui/separator";
 import { saveBoard } from "@/lib/actions";
 import html2canvas from "html2canvas-pro";
+import { socket } from "@/lib/socket-client";
 
 export enum Tool {
   POINTER = "pointer",
@@ -20,15 +21,14 @@ export default function Board() {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.POINTER);
   const [pencilColour, setPencilColour] = useState<string>("black");
   const [lineWidth, setLineWidth] = useState([2]);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [lastX, setLastX] = useState(0);
+  const [lastY, setLastY] = useState(0);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const params = useParams();
   const roomId = params.id as string;
-
-  const [socket, setSocket] = useState<Socket<
-    DefaultEventsMap,
-    DefaultEventsMap
-  > | null>(null);
 
   const clearCanvas = () => {
     if (!socket) return;
@@ -41,27 +41,8 @@ export default function Board() {
     socket.emit("clearCanvas", roomId);
   };
 
-  useEffect(() => {
-    const newSocket = io(
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
-    );
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.close();
-    };
-  }, []);
-
-  //Join correct room once socket connects
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.emit("joinRoom", roomId);
-  }, [socket, roomId]);
-
   // Socket event listeners
   useEffect(() => {
-    if (!socket) return;
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -79,17 +60,17 @@ export default function Board() {
     });
 
     socket.on("clearCanvas", () => {
+      console.log("clearCanvas event received");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
-  }, [canvasRef, socket]);
+
+    return () => {
+      socket.off("canvasImage");
+      socket.off("clearCanvas");
+    };
+  }, [canvasRef]);
 
   useEffect(() => {
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    if (activeTool === Tool.POINTER) return;
-    if (!socket) return;
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -100,37 +81,47 @@ export default function Board() {
     ctx.lineCap = "round";
 
     const startDrawing = (e: { offsetX: number; offsetY: number }) => {
+      if (activeTool === Tool.POINTER) return;
+
       // Set up drawing styles
       if (activeTool === Tool.ERASER) {
         ctx.globalCompositeOperation = "destination-out";
         ctx.strokeStyle = "rgba(0,0,0,1)";
-      } else {
+      } else if (activeTool === Tool.PENCIL) {
         ctx.globalCompositeOperation = "source-over";
         ctx.strokeStyle = pencilColour;
       }
-      isDrawing = true;
+      setIsDrawing(true);
 
-      [lastX, lastY] = [e.offsetX, e.offsetY];
+      setLastX(e.offsetX);
+      setLastY(e.offsetY);
     };
 
     const draw = (e: { offsetX: number; offsetY: number }) => {
-      if (!isDrawing) return;
+      if (!isDrawing || activeTool === Tool.POINTER) return;
 
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
 
-      [lastX, lastY] = [e.offsetX, e.offsetY];
+      setLastX(e.offsetX);
+      setLastY(e.offsetY);
+
+      // setIsDrawing(false);
     };
 
     const endDrawing = () => {
-      isDrawing = false;
+      if (activeTool === Tool.POINTER) return;
 
+      setIsDrawing(false);
       sendCanvasData();
     };
 
     const sendCanvasData = () => {
+      if (activeTool === Tool.POINTER) return;
+
+      console.log("sending canvas data");
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -162,20 +153,30 @@ export default function Board() {
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", endDrawing);
-    canvas.addEventListener("mouseout", endDrawing);
+    // canvas.addEventListener("mouseout", endDrawing);
 
     // Event listeners for erasing
     // window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      console.log("unmounting whiteboard");
       // Clean up event listeners when component unmounts
       canvas.removeEventListener("mousedown", startDrawing);
       canvas.removeEventListener("mousemove", draw);
       canvas.removeEventListener("mouseup", endDrawing);
-      canvas.removeEventListener("mouseout", endDrawing);
+      // canvas.removeEventListener("mouseout", endDrawing);
       // window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [canvasRef, socket, roomId, pencilColour, activeTool, lineWidth]);
+  }, [
+    canvasRef,
+    roomId,
+    pencilColour,
+    activeTool,
+    lineWidth,
+    isDrawing,
+    lastX,
+    lastY,
+  ]);
 
   const handleSave = () => {
     const capture = document.getElementById("capture") as HTMLElement;
@@ -200,26 +201,24 @@ export default function Board() {
         1,
       );
     });
-    // if (!canvasRef.current) return;
-    // const canvas = canvasRef.current;
-    // canvas.toBlob(
-    //   (blob) => {
-    //     if (blob) {
-    //       const file = new File([blob], "board.png", {
-    //         type: "image/png",
-    //       });
-    //       try {
-    //         saveBoard(Number(roomId), file);
-    //         alert("Board saved successfully!");
-    //       } catch (error) {
-    //         alert("Error saving board: " + error);
-    //       }
-    //     }
-    //   },
-    //   "image/png",
-    //   1,
-    // );
   };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const handleResize = () => {
+      ctx.canvas.height = window.innerHeight;
+      ctx.canvas.width = window.innerWidth;
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="h-full">
@@ -229,17 +228,11 @@ export default function Board() {
         setPencilColour={setPencilColour}
         setLinewidth={setLineWidth}
         clear={clearCanvas}
-        canvasRef={canvasRef}
         save={handleSave}
       />
       <Separator />
       <canvas
         ref={canvasRef}
-        height={Math.max(
-          window.innerHeight,
-          document.getElementById("whiteboardui")?.offsetHeight ?? 0,
-        )}
-        width={window.innerWidth}
         style={{
           backgroundColor: "transparent",
           left: 0,
