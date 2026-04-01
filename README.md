@@ -40,16 +40,16 @@ A room is a space users can connect and interact with a live code editor and whi
 Room creation starts with a *shadcn/ui* dialog popup containing a form for room details. Once submitted, a Next.js server action is invoked to create a record of the room in the database, the user is then redirected to a room and a socket connection is established with the backend for both the code editor and whiteboard. The backend contains an array of all live rooms and its purpose is to receive messages from clients and broadcast those messages to other users in the respective room.
 
 #### Whiteboard
-The whiteboard is one of our core features and features a live update canvas that users can draw on using a pen that can change colour and stroke size, and erase or clear. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. div, canvas) and *shadcn/ui* components (e.g. Slider, Input, Button) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from Whiteboard to WhiteboardTools, for restricting the possible Tool options, and when interacting with socket channels.
+The whiteboard is one of our core features and consits of a live update canvas that users can draw on using a pen. The whiteboard is setup with a socket to ensure the live functionality is synchronized across the network. Users can change the colour of the pen and the stroke size, they are also able to erase strokes and clear the canvas. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. div, canvas) and *shadcn/ui* components (e.g. Slider, Input, Button) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from Whiteboard to WhiteboardTools, for restricting the possible Tool options, and when interacting with socket channels.
 
 The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a Next.js server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our *DigitalOcean* bucket storage with a `.png` representation of the whiteboard. We make another database call to save the storage key for easy access when retrieving files.
 
 #### Code Editor
-The other main feature of our application is the live updating code editor, which is implemented with the *CodeMirror* component. The code editor component uses built in extensions to highlight the syntax associated with the selected language for ease of understanding.
+The live updating code editor is another core feature of our application, which is implemented with the *CodeMirror* component and setup with a socket for synchronicity. The code editor component uses built in extensions to highlight the syntax associated with the selected language for ease of understanding.
 
 The code editor also has an associated toolbar to aid a user with some useful features. The toolbar takes a set of typesafe props passed from the code editor (i.e. fileInputRef: RefObject<HTMLInputElement | null>) to keep the code editor in sync with the toolbar. The toolbar consists of several *shadcn/ui* components including *Select* for the language selection, *Input* for text size updates, and *Buttons* for text size updates, upload, download and save.
 
-The code editor can be saved by calling a created *Next.js action*. Similar to the whiteboard action, the action confirms that a room exists in the database before making a new `PutObjectCommand` to our *DigitalOcean* bucket. Then one final call is made to the database to save the storage key.
+The code editor can be saved by calling a created *Next.js action*. Similar to the whiteboard action, the action confirms that a room exists in the database before making a new `PutObjectCommand` to our *DigitalOcean* bucket. Then one final call is made to the database t
 
 ### Files
 talk about:
@@ -207,22 +207,22 @@ Specifically, briefly address:
 
 Do not repeat full AI prompts or responses here. Instead, reference your ai-session.md file for concrete examples.
 
+
 ## Individual Contributions
 
-### Jess
+- Jesse implemented Better Auth, set up socket implementation for the whiteboard, set up the whiteboard endpoints and database operations, set up saving the whiteboard, and integrated DigitalOcean for file storage.
 
-### Nilofer
+- Nilofer set up the socket implementation of the code editor, set up the code editor endpoints and database operations, set up uploading and downloading code, and created the ability to have multiple distinct rooms.
 
-### Catherine
+- Catherine created the sidebar menu and navigation, created the main dashboard page, created the my file page, created the my room page, and created the 'Create New Room' button with the associated modal.
 
-### Taniya
+- Taniya created the landing page, created the room page, created the code editor and whiteboard toolbar, connected the code editor and whiteboard toolbar buttons, and created the 'Join Room' button with the associated modal.
 
 ## Lessons Learned and Concluding Remarks
-Our goal of creating a workspace to aid in the simultaneous presentation of code and ideas was overall successfull. Users are able to use both the code editor and whiteboard in rooms that can be created and joined by other users. 
+Our goal of creating a workspace to aid in the simultaneous presentation of code and ideas was overall successfull. Users are able to use both the code editor and whiteboard in rooms that can be created and joined by other users.
 
-            - lessons learned
-                - Check ins are important
-                - Next.js was useful
-                - Better Auth was great for user authentication
-                - Time constraints
-                - 
+Throughtout this project there are a few lessons that we've learned which we will use in future projects. 
+
+            ---- lessons learned/?
+
+Overall, the experience we gained will be instrumental when going forward and working on new projects.
