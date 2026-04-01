@@ -25,6 +25,7 @@ export function RoomCards() {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
+    console.log(rooms)
     getRooms();
   }, []);
 

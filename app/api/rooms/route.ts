@@ -8,12 +8,14 @@ export async function GET(request: Request) {
     headers: await headers(),
   });
 
+  
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const params = new URL(request.url).searchParams;
   const userId = params.get("userId");
+  console.log(userId)
 
   const rooms = await prisma.room.findMany({
     where: {
