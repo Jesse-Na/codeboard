@@ -23,7 +23,6 @@ CodeBoard is a *Next.js* full-stack web application that uses *Typescript* for b
 The backend includes Next.js server actions, GET API routes, Socket.io endpoints for real-time whiteboards and code editors, and server-side-rendered components. Images and code files created by the user is stored in a bucket provided by DigitalOcean spaces. Rooms and their records, along with users are stored in a local Postgres database. Prisma ORM is used to for database interactions and to generate types for the application to use.
 
 ## Features
-> Outline the main features of your application and explain how they fulfill the course project requirements and achieve your objectives.
 
 ### Dashboard / Landing Page / General UI
 The overall UI of the application uses *shadcn/ui* and *Tailwind CSS* to ensure consistency and responsiveness throughout each page, while meeting the frontend requirements of ths project. 
@@ -35,7 +34,7 @@ The dashboard serves as the main page of the application, where authenticated us
 ### User Accounts
 User authentication is one of the advanced features implemented for this project. Better Auth was implemented to ensure only authenticated users are able to access the website's feature. Users can create an account or log in with an existing account through their email and password. Once successfully authenticated, a secure session will be established using cookies. Frontend routes such as user account page and workspace editors will be protected by verifying the authentication state from `AuthContext` and `AuthProvider` before displaying content. All backend API endpoints will also require a valid authenticated session before returning any data. User passwords will be securely hashed and salted via Better Auth.
 
-### Rooms (Jess)
+### Rooms
 A room is a space users can connect and interact with a live code editor and whiteboard. Each room has a unique identifier stored inside our database and sits on the API route `/rooms/[id]`. Additionally, a list of all available rooms can be fetched with a GET request to the API endpoint `/rooms`.
 
 Room creation starts with a *shadcn/ui* dialog popup containing a form for room details. Once submitted, a Next.js server action is invoked to create a record of the room in the database, the user is then redirected to a room and a socket connection is established with the backend for both the code editor and whiteboard. The backend contains an array of all live rooms and its purpose is to receive messages from clients and broadcast those messages to other users in the respective room.
@@ -49,7 +48,7 @@ talk about:
     - database
     - actions
 
-#### Whiteboard (Jess)
+#### Whiteboard
 The whiteboard is one of our core features and features a live update canvas that users can draw on using a pen that can change colour and stroke size, and erase or clear. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. div, canvas) and *shadcn/ui* components (e.g. Slider, Input, Button) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from Whiteboard to WhiteboardTools, for restricting the possible Tool options, and when interacting with socket channels.
 
 The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a Next.js server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our bucket storage with a `.png` representation of the whiteboard. We make another database call to save the storage key for easy access when retrieving files.
@@ -71,7 +70,6 @@ The files page consists of a table with the following columns:
 
 
 ## User Guide
->Provide clear instructions for using each main feature, supported with screenshots where appropriate.
 
 ### Feature: Landing Page and Dashboard (Catherine)
 
