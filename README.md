@@ -69,7 +69,7 @@ The files page consists of a table with the following columns:
 
 ## User Guide
 
-### Feature: Landing Page and Dashboard (Catherine)
+### Feature: Landing Page and Dashboard
 
 #### Landing Page
 On the landing page, users can do the following:
@@ -131,7 +131,7 @@ Press the **Download** button to download the file onto your computer.
 
 <img width="1623" height="275" alt="image" src="https://github.com/user-attachments/assets/87fe88b0-247c-44f2-8b68-4ad9862b1c8c" />
 
-## Development Guide (Jess)
+## Development Guide
 
 ### Prerequisites
 
@@ -192,7 +192,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 >Provide the live URL of your application and relevant deployment platform details.
 
 
-## AI Assistance & Verification (Summary)
+## AI Assistance & Verification
 If AI tools contributed to your project, provide a concise, high-level summary demonstrating that your team:
 
     Understands where and why AI tools were used
