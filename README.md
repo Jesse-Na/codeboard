@@ -196,7 +196,7 @@ AI was only briefly used in this project to explore ideas on implementing a vert
 
 - Jesse implemented Better Auth, set up socket implementation for the whiteboard, set up the whiteboard endpoints and database operations, set up saving the whiteboard, and integrated DigitalOcean for file storage.
 
-- Nilofer set up the socket implementation of the code editor, set up the code editor endpoints and database operations, set up uploading and downloading code, and created the ability to have multiple distinct rooms.
+- Nilofer set up the code editor and language dropdown and their socket implementations, set up uploading and downloading code files, and created the ability to have multiple distinct rooms.
 
 - Catherine created the sidebar menu and navigation, created the main dashboard page, created the my file page, created the my room page, and created the 'Create New Room' button with the associated modal.
 
