@@ -190,11 +190,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 Our project does not have a live deployment.
 
 ## AI Assistance & Verification
-AI was only briefly used in this project to explore ideas on implementing a vertical toolbar for the whiteboard. The AI provided a solution that used the *shadcn/ui Menubar* to create the toolbar. However, the *shadcn/ui Menubar* was not designed to be vertical as it had no supported 'orientation' prop and the AI did not consider this when the providing the solution. After a few more prompts to try and create a vertical toolbar without using the menubar, it became clear that there the AI was facing limitations in this scenario. As such, we no longer considered AI when planning the rest of the project.
+AI was only briefly used in this project to explore ideas on implementing a vertical toolbar for the whiteboard.
+
+### Prompt
+How do I make a shadcn menubar go from top to bottom instead of left to right
+
+### AI Response
+
+
+### What we did with it
+The AI provided a solution that used the *shadcn/ui Menubar* to create the toolbar. However, the *shadcn/ui Menubar* was not designed to be vertical as it had no supported 'orientation' prop and the AI did not consider this when the providing the solution. After a few more prompts to try and create a vertical toolbar without using the menubar, it became clear that there the AI was facing limitations in this scenario. As such, we no longer considered AI when planning the rest of the project.
 
 ## Individual Contributions
 
-- Jesse implemented Better Auth, set up socket implementation for the whiteboard, set up the whiteboard endpoints and database operations, set up saving the whiteboard, and integrated DigitalOcean for file storage.
+- Jesse implemented Better Auth, set up socket implementation for the whiteboard, set up the whiteboard endpoints and database operations, set up saving the whiteboard, and integrated DigitalOcean Spaces for file storage.
 
 - Nilofer set up the code editor and language dropdown and their socket implementations, set up uploading and downloading code files, and created the ability to have multiple distinct rooms.
 
