@@ -191,22 +191,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 ## Deployment Information
 Our project does not have a live deployment.
 
-
 ## AI Assistance & Verification
-If AI tools contributed to your project, provide a concise, high-level summary demonstrating that your team:
-
-    Understands where and why AI tools were used
-    Can evaluate AI output critically
-    Verified correctness through technical means
-
-Specifically, briefly address:
-
-    Where AI meaningfully contributed (e.g.,architecture exploration, database queries, debugging, documentation)
-    One representative mistake or limitation in AI output (details should be documented in ai-session.md)
-    How correctness was verified (e.g., manual testing of user flows, logs, unit or integration tests)
-
-Do not repeat full AI prompts or responses here. Instead, reference your ai-session.md file for concrete examples.
-
+AI was only briefly used in this project to explore ideas on implementing a vertical toolbar for the whiteboard. The AI provided a solution that used the *shadcn/ui Menubar* to create the toolbar. However, the *shadcn/ui Menubar* was not designed to be vertical as it had no supported 'orientation' prop and the AI did not consider this when the providing the solution. After a few more prompts to try and create a vertical toolbar without using the menubar, it became clear that there the AI was facing limitations in this scenario. As such, we no longer considered AI when planning the rest of the project.
 
 ## Individual Contributions
 
