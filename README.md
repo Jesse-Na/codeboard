@@ -205,8 +205,12 @@ AI was only briefly used in this project to explore ideas on implementing a vert
 ## Lessons Learned and Concluding Remarks
 Our goal of creating a workspace to aid in the simultaneous presentation of code and ideas was overall successfull. Users are able to use both the code editor and whiteboard in rooms that can be created and joined by other users.
 
-Throughtout this project there are a few lessons that we've learned which we will use in future projects. 
+Throughout this project there are a few lessons that we've learned which we will use in future projects. 
 
-            ---- lessons learned/?
+- One lesson learned was the importance of communication in software teams. Our team prioritized communication throughout the project by holding weekly sync-up meetings to share progress, blockers and next steps. We also had frequent asychronous conversations through messages so that any urgent updates weren't held off until the meeting. Due to our constant communication, we felt that we had less misunderstandings, had quicker resolutions for blockers, met our internal deadlines and had a better shared understanding of the project. 
+
+- Another lesson we learned was that although AI can improve productivity, it is not always a useful tool for software projects. We found that AI was prone to hallucinations in code since it can suggest code changes that are logically incorrect or don't meet our requirements. We learnt that it is often better to avoid input from AI in order to have better quality code. 
+
+- We also learned the importance of testing early to avoid the accumulation of bugs at the end. Each of us worked on different branches for each feature we were implementing and made sure to thoroughly test the feature before merging the branch to main. This way of working resulted in us having cleaner code and not having to deal with very many bugs at the end.
 
 Overall, the experience we gained will be instrumental when going forward and working on new projects.
