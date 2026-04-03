@@ -1,11 +1,13 @@
 # Codeboard
 ### Team Information
-Nilofer Hyder — 1007273807 — nilofer.hyder@mail.utoronto.ca <br>
-Jesse Na — 1005890788 — jesse.na@mail.utoronto.ca <br>
-Taniya Peterratnaraj — 1003004438 — taniya.peterratnaraj@mail.utoronto.ca <br>
-Catherine Zhu — 1006780592 — czhu233@gmail.com <br>
+Nilofer Hyder — 1007273807 — nilofer.hyder@mail.utoronto.ca
+Jesse Na — 1005890788 — jesse.na@mail.utoronto.ca
+Taniya Peterratnaraj — 1003004438 — taniya.peterratnaraj@mail.utoronto.ca
+Catherine Zhu — 1006780592 — czhu233@gmail.com
 
 ## Video Demo
+
+https://youtu.be/ZjjNYBOINYc
 
 ## Motivation
 Computer Science and Engineering education currently lacks software tools that suit the needs of educators. Teachers typically use a mix of slides (e.g. Powerpoint, Quarto), live code-alongs, or notetaking apps (e.g Notability, One Note), because each tool on its own is not sufficient. Slides provide a structured and shareable way to introduce concepts and present code, but lack the flexibility to adapt the code to questions. Live code-alongs offer the greatest flexibility, allowing students and teachers to test ideas and develop understanding together, but lack structure and shareability. Notetaking apps offer the structure of slides and the flexibility of live coding, but has no support for code. 
@@ -16,9 +18,9 @@ These clumsy setups result in significant additional lecture prep time, material
 Our goal was to create a workspace that would aid in the presentation of code and ideas simultaneously. We built an application that allows users to create and host rooms that other users can join. Each room features a real-time code editor and a whiteboard, allowing educators to both write code and draw visual aids on the side. We wanted to make the experience as smooth and lightweight as possible, so that users could spin up a room and get to teaching on a platform that just works.
 
 ## Technical Stack
-CodeBoard is a *Next.js* full-stack web application that uses *Typescript* for both the frontend and backend code for type safety. UI elements for the frontend is implemented using both *Next.js* and *React*, and styled with *Tailwind CSS*. *shadcn/ui* is also used to ensure a clean, modern look of the application.
+CodeBoard is a *Next.js* full-stack web application that uses *Typescript* for both the frontend and backend code for type safety. UI elements on the frontend are implemented using both *Next.js* and *React*, and styled with *Tailwind CSS*. *shadcn/ui* is also used to ensure a clean, modern look of the application.
 
-The backend includes Next.js server actions, GET API routes, Socket.io endpoints for real-time whiteboards and code editors, and server-side-rendered components. Images and code files created by the user is stored in a bucket provided by DigitalOcean spaces. Rooms and their records, along with users are stored in a local Postgres database. Prisma ORM is used to for database interactions and to generate types for the application to use.
+The backend includes Next.js server actions, GET API routes, Socket.io endpoints for real-time whiteboards and code editors, and server-side-rendered components. Images and code files created by the user are stored in a bucket provided by DigitalOcean Spaces. Rooms and their file records, along with users, are stored in a local Postgres database. Prisma ORM is used to interact with the database and generate types for the application to use.
 
 ## Features
 
@@ -27,43 +29,36 @@ The overall UI of the application uses *shadcn/ui* and *Tailwind CSS* to ensure 
 
 Upon entering the site, users are greeted by the landing page where users can sign up or sign in, or navigate to the dashboard directly. 
 
-The dashboard serves as the main page of the application, where authenticated users can create or join rooms, known as workspaces. These workspaces are displayed as a grid in the form of cards. Users can also view their own workspaces or any files saved during the room session by navigating to the *My Workspace* or *My Files* tab on the sidebar, respectively. Buttons are conveniently located on the header of the dashboard or as a card itself to allow users to create their own workspace.
+The dashboard serves as the main page of the application, where authenticated users can create or join rooms. These rooms are displayed as a grid in the form of cards. Users can also view their own rooms or any files saved during a session by navigating to the *My Rooms* or *My Files* tab on the sidebar, respectively. Buttons are conveniently located on the header of the dashboard or as a card itself to allow users to create their own room.
 
 ### User Accounts
-User authentication is one of the advanced features implemented for this project. Better Auth was implemented to ensure only authenticated users are able to access the website's feature. Users can create an account or log in with an existing account through their email and password. Once successfully authenticated, a secure session will be established using cookies. Frontend routes such as user account page and workspace editors will be protected by verifying the authentication state from `AuthContext` and `AuthProvider` before displaying content. All backend API endpoints will also require a valid authenticated session before returning any data. User passwords will be securely hashed and salted via Better Auth.
+User authentication is one of the advanced features implemented for this project. Better Auth was implemented to ensure only authenticated users are able to access the application. Users can create an account or log in with an existing account through their email and password. Once successfully authenticated, a secure session will be established. Frontend routes such as user account page and workspace editors will be protected by verifying the authentication state from the BetterAuth client. All backend API endpoints will also require a valid authenticated session before returning any data. User passwords will be securely hashed and salted via Better Auth.
 
 ### Rooms
-A room is a space users can connect and interact with a live code editor and whiteboard. Each room has a unique identifier stored inside our database and sits on the API route `/rooms/[id]`. Additionally, a list of all available rooms can be fetched with a GET request to the API endpoint `/rooms`.
+A room is a space users can connect to and interact with a live code editor and whiteboard. Each room has a unique identifier stored inside our database and sits on the API route `/rooms/[id]`. Additionally, a list of all available rooms can be fetched with a GET request to the API endpoint `/rooms`.
 
-Room creation starts with a *shadcn/ui* dialog popup containing a form for room details. Once submitted, a Next.js server action is invoked to create a record of the room in the database, the user is then redirected to a room and a socket connection is established with the backend for both the code editor and whiteboard. The backend contains an array of all live rooms and its purpose is to receive messages from clients and broadcast those messages to other users in the respective room.
+Room creation starts with a *shadcn/ui* dialog popup containing a form for room details. Once submitted, a Next.js server action is invoked to create a record of the room in the database, the user is then redirected to a room and a socket connection is established with the backend. The backend contains an array of all live rooms and its purpose is to receive messages from clients and broadcast those messages to other users in the respective room.
 
 #### Whiteboard
-The whiteboard is one of our core features and consits of a live update canvas that users can draw on using a pen. The whiteboard is setup with a socket to ensure the live functionality is synchronized across the network. Users can change the colour of the pen and the stroke size, they are also able to erase strokes and clear the canvas. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. div, canvas) and *shadcn/ui* components (e.g. Slider, Input, Button) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from Whiteboard to WhiteboardTools, for restricting the possible Tool options, and when interacting with socket channels.
+The whiteboard is one of our core features and consists of a live update canvas that users can draw on using a pen. The whiteboard emits and listens for canvas image events to ensure updates are synchronized across all users in the room. Users can change the colour of the pen and the stroke size, they are also able to erase strokes and clear the canvas. The whiteboard and its accompanying toolbar are React components made using a variety of HTML elements (e.g. `div`, `canvas`) and *shadcn/ui* components (e.g. `Slider`, `Input`, `Button`) all styled with Tailwind CSS classes. Typescript is heavily featured when passing props from `Whiteboard` to `WhiteboardTools`, for restricting the possible `Tool` options, and when interacting with socket channels.
 
-The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a Next.js server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our *DigitalOcean* bucket storage with a `.png` representation of the whiteboard. We make another database call to save the storage key for easy access when retrieving files.
+The whiteboard can also be saved, which invokes a sequence of crucial steps in the backend, starting with a *Next.js* server action. The action verifies the room exists in the database, then makes a `PutObjectCommand` call to our *DigitalOcean* bucket storage with a `.png` representation of the code editor and whiteboard. We make another database call to save the storage key for easy access when retrieving files.
 
 #### Code Editor
-The live updating code editor is another core feature of our application, which is implemented with the *CodeMirror* component and setup with a socket for synchronicity. The code editor component uses built in extensions to highlight the syntax associated with the selected language for ease of understanding.
+The live code editor is another core feature of our application, which is implemented with the *CodeMirror* component, and emits and listens for code change events. The code editor component uses built-in extensions to highlight the syntax associated with the selected language for ease of understanding.
 
-The code editor also has an associated toolbar to aid a user with some useful features. The toolbar takes a set of typesafe props passed from the code editor (i.e. fileInputRef: RefObject<HTMLInputElement | null>) to keep the code editor in sync with the toolbar. The toolbar consists of several *shadcn/ui* components including *Select* for the language selection, *Input* for text size updates, and *Buttons* for text size updates, upload, download and save.
+The code editor also has an associated toolbar to aid a user with some useful features. The toolbar takes a set of typesafe props passed from the code editor (e.g. `fileInputRef: RefObject<HTMLInputElement | null>`) to keep the code editor in sync with the toolbar. The toolbar consists of several *shadcn/ui* components including `Select` for the language selection, `Input` for text size updates, and `Button` for text size updates, upload, download and save.
 
-The code editor can be saved by calling a created *Next.js action*. Similar to the whiteboard action, the action confirms that a room exists in the database before making a new `PutObjectCommand` to our *DigitalOcean* bucket. Then one final call is made to the database t
+The code editor can be saved by calling a *Next.js* server action. Similar to the whiteboard action, the action confirms that a room exists in the database before making a new `PutObjectCommand` to our *DigitalOcean* bucket. Then one final call is made to the database to save the storage key.
 
 ### Files
-talk about:
-- retrieving code and whiteboard images from old rooms
-- database
-- actions
+Code in the code editor and drawings made on the whiteboard can be saved to the backend. The file storage uses S3-compatible object storage that is implemented via *DigitalOcean Spaces*. Files are saved into the database as described above in the code editor and whiteboard sections.
 
-The files page consists of a table with the following columns:
-- Record ID, row ID for the table
-- Room, the name of the workspace where the file was saved from
-- Code File, download button for the downlodable file if available
-- Image File, download button containing the downloadbale file if available
-- Last Updated, timestamp for when it was last updated
+Saved files from a user's rooms can be accessed in the Files page, where file data is displayed in table format. The table includes the Record ID column (the row id of the table), the Room column (the name of the room that the file was saved from), the Code File column (contains a download button for the code file if it's available), the Image File column (contains a download button for the whiteboard image file if it's available), and the Last Updated column (the file's last updated timestamp). 
 
-- moving this here for now, delete if it's not needed :3
+The files are retrieved by calling a *Next.js action*, which queries the database for all records associated with the user. For each record, the associated code file or whiteboard image is fetched from the *DigitalOcean* bucket using its stored key via a `GetObjectCommand`. 
 
+This implementation allows users to access files from old rooms without needing to re-enter those rooms, providing persistent and centralized file management.
 
 ## User Guide
 
@@ -73,7 +68,7 @@ The files page consists of a table with the following columns:
 On the landing page, users can do the following:
 - Click **Sign Up** to log into the dashboard
 - Click **Dashboard** to enter the main page
-- Click **Join a Room** to directly join a workspace
+- Click **Join a Room** to directly join a workspace (must be logged in already)
 
 <img width="1915" height="598" alt="image" src="https://github.com/user-attachments/assets/f4cc6eae-799a-42e1-89d4-0dfab6c35e4f" />
 
@@ -85,7 +80,7 @@ The main page contains a collapsable navigation bar with the following tabs:
 - My Rooms
 - My Files
 
-The dashboard page consists of current rooms displayed in the form of cards. Each card details the name of the room, creator, and an optional description. The *My Rooms* page only displays the rooms created by the user. The *My Files* page lists any saved files from the room sessions. At the bottom of the navigation bar, users can choose to log out from their accounts.
+The dashboard page consists of all available rooms displayed in the form of cards. Each card details the name of the room, creator, and an optional description. The *My Rooms* page only displays the rooms created by the user. The *My Files* page lists any saved files from the room sessions. At the bottom of the navigation bar, users can choose to log out from their accounts.
 
 <img width="1887" height="1071" alt="image" src="https://github.com/user-attachments/assets/bc92c249-d1da-460f-9d1f-882a70f01632" />
 
@@ -101,7 +96,7 @@ To create a room, click the **Create New Room** button on the dashboard or in th
 
 <img width="371" height="373" alt="image" src="https://github.com/user-attachments/assets/73ebf9e4-d61b-455e-8380-fdb3e019d007" />
 
-To delete or edit the name, language, or description of the room, navigate to *My Workspace* and right-click on the room card. A menu will appear with the options to edit or permanently delete the room.
+To delete or edit the name, language, or description of the room, navigate to *My Rooms* and right-click on the room card. A menu will appear with the options to edit or permanently delete the room.
 
 <img width="486" height="235" alt="image" src="https://github.com/user-attachments/assets/8e32e7c1-20d6-4dec-8a7d-0f2b70f76a35" />
 
@@ -112,14 +107,14 @@ The room page consists of a code editor, a whiteboard and a toolbar associated w
 #### Code Editor
 Using the toolbar, users can switch programming languages to change syntax, or increase text size.
 
-Users can upload an existing code file from their computer using the **Upload Code** button, or write code directly in the editor. To save the edited code file locally, press **Download Code**. Click the **Save** icon to save the file in the application.
+Users can upload an existing code file from their computer using the **Upload Code** button, or write code directly in the editor. To save the edited code file locally, press **Download Code**. Click the **Save** icon to save the file to your "My Files".
  
 <img width="805" height="744" alt="image" src="https://github.com/user-attachments/assets/e313fa31-4e7f-4c56-a07b-4494b94920dd" />
 
 #### Whiteboard
-Using the toolbar, users can adjust the line width or colour. To draw, select the pencil icon under the tools section, or erase by selecting the eraser icon. To delete all drawings, click the trash icon. The hand tool allows the user to select text.
+Using the toolbar, users can adjust the line width or colour. To draw, select the pencil icon under the tools section, or erase by selecting the eraser icon. To delete all drawings, click the trash icon. Click the hand tool to turn off drawing mode and regain the ability to edit the code.
 
-To save the image in the application, click the **Save** icon.
+To save the image to your "My Files", click the **Save** icon.
 
 <img width="798" height="345" alt="image" src="https://github.com/user-attachments/assets/3d765988-7507-4ade-a7ab-0135625e922d" />
 
@@ -133,7 +128,7 @@ Press the **Download** button to download the file onto your computer.
 
 ### Prerequisites
 
-Ensure you have at least Node.js v22.x installed.
+Ensure you have at least Node.js v22.x installed. You can check using `node --version`
 
 ### Environment Setup and Configuration
 
@@ -142,7 +137,6 @@ Create a `.env` file with the following variables, for example:
 ```
 DATABASE_URL="postgresql://<user>:<password>@localhost:5432/codeboard?schema=public"
 NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
-NEXT_PUBLIC_DEBUG_MODE=true
 SPACES_KEY=your-access-key
 SPACES_SECRET=your-secret-key
 SPACES_REGION=tor1
@@ -176,11 +170,11 @@ Generate a secret key for Better Auth, you may use the command `openssl rand -ba
 ### Local Development and Testing
 For first-time set up or whenever you make a change to `schema.prisma`, run the following:
 
-Run `npx auth@latest generate` to generate Better Auth schemas.
-
 Run `npx prisma migrate dev` to apply SQL migrations.
 
 Run `npx prisma generate` 
+
+Run `npx auth@latest generate` to generate Better Auth schemas.
 
 Start the development server for testing `npm run dev`.
 
@@ -190,13 +184,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 Our project does not have a live deployment.
 
 ## AI Assistance & Verification
-AI was only briefly used in this project to explore ideas on implementing a vertical toolbar for the whiteboard.
-
-### Prompt
-How do I make a shadcn menubar go from top to bottom instead of left to right
-
-### What we did with it
-The AI provided a solution that used the *shadcn/ui Menubar* to create the toolbar. However, the *shadcn/ui Menubar* was not designed to be vertical as it had no supported 'orientation' prop and the AI did not consider this when the providing the solution. After a few more prompts to try and create a vertical toolbar without using the menubar, it became clear that there the AI was facing limitations in this scenario. As such, we no longer considered AI when planning the rest of the project.
+AI was only briefly used in this project to explore ideas on implementing a vertical toolbar for the whiteboard. The AI provided a solution that used the *shadcn/ui Menubar* to create the toolbar. However, the *shadcn/ui Menubar* was not designed to be vertical as it had no supported 'orientation' prop and the AI did not consider this when providing a solution. After a few more prompts to try and create a vertical toolbar without using the menubar, it became clear that the AI was facing limitations. As such, we no longer considered AI when planning the rest of the project.
 
 ## Individual Contributions
 
@@ -215,7 +203,7 @@ Throughout this project there are a few lessons that we've learned which we will
 
 - One lesson learned was the importance of communication in software teams. Our team prioritized communication throughout the project by holding weekly sync-up meetings to share progress, blockers and next steps. We also had frequent asychronous conversations through messages so that any urgent updates weren't held off until the meeting. Due to our constant communication, we felt that we had less misunderstandings, had quicker resolutions for blockers, met our internal deadlines and had a better shared understanding of the project. 
 
-- Another lesson we learned was that although AI can improve productivity, it is not always a useful tool for software projects. We found that AI was prone to hallucinations in code since it can suggest code changes that are logically incorrect or don't meet our requirements. We learnt that it is often better to avoid input from AI in order to have better quality code. 
+- Another lesson we learned was that although AI can improve productivity, it is not always a useful tool for software projects. We found that AI was prone to hallucinations and failed to see the bigger picture, since it can suggest code changes that aren't reasonable or don't meet our needs. We learnt that it is often better to avoid input from AI in order to have better quality code. 
 
 - We also learned the importance of testing early to avoid the accumulation of bugs at the end. Each of us worked on different branches for each feature we were implementing and made sure to thoroughly test the feature before merging the branch to main. This way of working resulted in us having cleaner code and not having to deal with very many bugs at the end.
 
