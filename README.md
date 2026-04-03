@@ -3,7 +3,7 @@
 Nilofer Hyder — 1007273807 — nilofer.hyder@mail.utoronto.ca <br>
 Jesse Na — 1005890788 — jesse.na@mail.utoronto.ca <br>
 Taniya Peterratnaraj — 1003004438 — taniya.peterratnaraj@mail.utoronto.ca <br>
-Catherine Zhu — 1006780592 — czhu233@gmail.com <br>
+Catherine Zhu — 1006780592 — catherinee.zhu@mail.utoronto.ca <br>
 
 ## Video Demo
 
