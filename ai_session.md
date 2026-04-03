@@ -1,8 +1,8 @@
 ## Creating a Vertical Toolbar
  
 ### Prompt
-Create a shadcn button group for me that acts as a toolbar for a whiteboard. It should have a pen button, eraser button, and clear button. The pen button when clicked should pop out a dropdown with various colours
- 
+How do I make a shadcn menubar go from top to bottom instead of left to right
+
 ### AI Response
  
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/c33f16cc-d932-465c-bef6-f983ed7be777" />
