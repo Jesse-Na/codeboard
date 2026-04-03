@@ -1,9 +1,9 @@
 # Codeboard
 ### Team Information
-Nilofer Hyder — 1007273807 — nilofer.hyder@mail.utoronto.ca
-Jesse Na — 1005890788 — jesse.na@mail.utoronto.ca
-Taniya Peterratnaraj — 1003004438 — taniya.peterratnaraj@mail.utoronto.ca
-Catherine Zhu — 1006780592 — czhu233@gmail.com
+Nilofer Hyder — 1007273807 — nilofer.hyder@mail.utoronto.ca <br>
+Jesse Na — 1005890788 — jesse.na@mail.utoronto.ca <br>
+Taniya Peterratnaraj — 1003004438 — taniya.peterratnaraj@mail.utoronto.ca <br>
+Catherine Zhu — 1006780592 — czhu233@gmail.com <br>
 
 ## Video Demo
 
